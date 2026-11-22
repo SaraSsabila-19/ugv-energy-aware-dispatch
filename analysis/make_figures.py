@@ -198,7 +198,7 @@ def fig3(s, out, fmts):
     eff = defaultdict(lambda: defaultdict(list))
     for p in rows(RES / "D_cost_proxy/analysis/paired_seed_effects.csv"):
         if p["reference"] == "e0":
-            for k in ("battery_pp", "ride_s", "wait_s"):
+            for k in ("battery_pp", "ride_s", "wait_s", "completed"):
                 eff[(p["mass"], p["algorithm"], p["arm"])][k].append(float(p[k]))
     holm = {(r["mass"], r["algorithm"], r["arm"]): float(r["holm_p"]) for r in rows(RES / "D_cost_proxy/analysis/primary_contrasts.csv")
             if r["family"] == "energy_sweep" and r["metric"] == "battery_pp"}
@@ -230,11 +230,12 @@ def fig3(s, out, fmts):
              Line2D([], [], marker="o", ls="none", color=MUTED, mfc="white", ms=4, label="not significant")]
     policy_legend(axes[0][0], "upper left", extra=sig_h, ncol=2)
     save(fig, out, "Fig3_energy_weight_sweep", fmts, src, ["mass", "policy", "arm", "metric", "n_seeds", "mean", "ci_low", "ci_high", "holm_p"])
+    max_comp = max(abs(st.mean(v["completed"])) for v in eff.values())
     return ("Fig. 3. Experiment D: response to the energy weight αE relative to the time-only objective (αE = 0), 40 paired seeds "
             "per point. (a, b) Battery saving; filled markers are significant after Holm adjustment over the 24-test energy-sweep "
             "family, open markers are not. (c, d) Reduction in mean passenger ride time (secondary, unadjusted). 'PK proxy' is the "
             "physics-derived passenger-km surrogate (not fitted to outcomes). 95% t intervals. No optimal weight is selected from these "
-            "confirmatory seeds; completions were unchanged in every arm (within ±0.1 per 100).")
+            f"confirmatory seeds; mean completions changed by at most {max_comp:.2f} per 100 requests in any arm.")
 
 
 # ------------------------------------------------------------------------------------ Fig 4: operating boundaries (B, E, F)
