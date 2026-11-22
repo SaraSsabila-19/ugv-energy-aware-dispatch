@@ -71,7 +71,7 @@ experiments/                 exact experiment code, byte-identical to the kit th
 results/                     protocols, validation reports, run-level tables, contrasts and figures per campaign
 analysis/synthesis.py        post hoc replication synthesis of the canonical cell; outputs in analysis/output/
 analysis/make_figures.py     the six paper figures -> figures/ (with source_data/ and CAPTIONS.md)
-figures/                     generated figures (PDF, PNG, TIFF), plotted data and draft captions
+figures/                     generated figures (PDF, PNG, TIFF; Fig. 1 and 2 also as separate a/b panels), plotted data, draft captions
 verification/                repository verifier, sample-run reproduction, Experiment C native reference check
 archives/                    complete original campaign export archives (with per-run outputs) and kit provenance
 docs/                        reproduction guide, provenance and deviations, data availability statement

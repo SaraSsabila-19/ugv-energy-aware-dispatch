@@ -1,0 +1,11 @@
+outcome,study,policy,n_seeds,mean,ci_low,ci_high,kind
+Ride-time reduction (s),C (dynamics),greedy,40,12.057876925000006,7.460230944190751,16.65552290580926,study
+Ride-time reduction (s),D (cost proxy),greedy,40,15.387836875000003,10.652900496871547,20.122773253128457,study
+Ride-time reduction (s),E (network),greedy,40,14.365154725000004,7.510988449730074,21.219321000269932,study
+Ride-time reduction (s),F (road load),greedy,40,13.159116399999998,8.14895514940845,18.169277650591546,study
+Ride-time reduction (s),"Pooled (random effects, post hoc)",greedy,160,13.636028083700982,11.159043548301065,16.1130126191009,pooled
+Ride-time reduction (s),C (dynamics),hungarian,40,9.574609,3.423264948037522,15.72595305196248,study
+Ride-time reduction (s),D (cost proxy),hungarian,40,11.434798775,6.140726583582464,16.72887096641754,study
+Ride-time reduction (s),E (network),hungarian,40,13.680181925000005,9.160432687066972,18.199931162933037,study
+Ride-time reduction (s),F (road load),hungarian,40,8.468769874999996,3.665812370868827,13.271727379131164,study
+Ride-time reduction (s),"Pooled (random effects, post hoc)",hungarian,160,10.995576484380523,8.529636295836857,13.461516672924189,pooled

@@ -7,6 +7,8 @@
     python analysis/make_figures.py --only 1 4           # build selected figures
 
 Outputs (default folder figures/):
+  Figures 1 and 2 are also written as separate single-column panels without panel letters:
+  Fig1a_replication_battery, Fig1b_replication_ride_time, Fig2a_payload_greedy, Fig2b_payload_hungarian.
   FigN_<name>.pdf   vector, fonts embedded (TrueType), for submission
   FigN_<name>.png   600 dpi, for drafts and slides
   FigN_<name>.tif   600 dpi, LZW-compressed, for journals that request TIFF
@@ -110,47 +112,73 @@ def save(fig, out, stem, formats, source, header):
 
 
 # ------------------------------------------------------------------------------- Fig 1: replication of the canonical cell
+def _fig1_panel(ax, tab, pool, data, xlabel, xlim, src):
+    studies = list(data.keys()); n = len(studies)
+    ypos = {name: n - i + 1 for i, name in enumerate(studies)}
+    for pol, dy in zip(POL, (0.17, -0.17)):
+        for r in (t for t in tab if t["policy"] == pol):
+            point(ax, r["mean"], ypos[r["study"]] + dy, r["ci_low"], r["ci_high"], pol)
+            src.append([xlabel, r["study"], pol, r["n"], r["mean"], r["ci_low"], r["ci_high"], "study"])
+        p = pool[pol]["all"]
+        ax.errorbar(p["re"], 0.75 + dy, xerr=[[p["re"] - p["re_low"]], [p["re_high"] - p["re"]]], fmt="D", ms=5,
+                    color=COLOR[pol], mfc=COLOR[pol], mec=INK, mew=0.6, elinewidth=1.4, zorder=4)
+        src.append([xlabel, "Pooled (random effects, post hoc)", pol, p["seeds"], p["re"], p["re_low"], p["re_high"], "pooled"])
+    ax.axhline(1.5, color=GRID, lw=0.6)
+    zero_line(ax)
+    labels = [lab.replace(" (approx. denominator)", "*") for lab in studies] + [f"Pooled ({sum(r['n'] for r in tab if r['policy'] == 'greedy')} seeds)"]
+    ax.set_yticks([ypos[x] for x in studies] + [0.75]); ax.set_yticklabels(labels)
+    ax.tick_params(axis="y", length=0); ax.spines["left"].set_visible(False)
+    ax.set_ylim(0.2, n + 1.6); ax.set_xlabel(xlabel); ax.set_xlim(*xlim)
+
+
+def _fig1_legend(fig, anchor_x, ncol=3):
+    h = [Line2D([], [], marker=MARK[p], color=COLOR[p], ls="none", ms=4.2, label=NAME[p]) for p in POL]
+    h.append(Line2D([], [], marker="D", color=MUTED, mfc="white", mec=INK, ls="none", ms=4.5, label="Pooled estimate (post hoc)"))
+    fig.legend(handles=h, loc="lower center", bbox_to_anchor=(anchor_x, 0.99), ncol=ncol, frameon=False, handletextpad=0.3, columnspacing=1.2)
+
+
+FIG1_HEADER = ["outcome", "study", "policy", "n_seeds", "mean", "ci_low", "ci_high", "kind"]
+
+
 def fig1(s, out, fmts):
     energy, ride = SY.collect()
     e_tab, e_pool = SY.synthesise(energy); r_tab, r_pool = SY.synthesise(ride)
+    E = (e_tab, e_pool, energy, "Battery saving (%)", (-1.2, 4.6)); R = (r_tab, r_pool, ride, "Ride-time reduction (s)", (0, 23))
+    # combined two-panel figure
     fig, axes = plt.subplots(1, 2, figsize=(s["double"], 2.75), gridspec_kw=dict(width_ratios=[1.25, 1], wspace=0.55))
     src = []
-    for ax, tab, pool, xlabel, letter, data in ((axes[0], e_tab, e_pool, "Battery saving (%)", "a", energy),
-                                                (axes[1], r_tab, r_pool, "Ride-time reduction (s)", "b", ride)):
-        studies = list(data.keys()); n = len(studies)
-        ypos = {name: n - i + 1 for i, name in enumerate(studies)}
-        for pol, dy in zip(POL, (0.17, -0.17)):
-            for r in (t for t in tab if t["policy"] == pol):
-                point(ax, r["mean"], ypos[r["study"]] + dy, r["ci_low"], r["ci_high"], pol)
-                src.append([xlabel, r["study"], pol, r["n"], r["mean"], r["ci_low"], r["ci_high"], "study"])
-            p = pool[pol]["all"]
-            ax.errorbar(p["re"], 0.75 + dy, xerr=[[p["re"] - p["re_low"]], [p["re_high"] - p["re"]]], fmt="D", ms=5,
-                        color=COLOR[pol], mfc=COLOR[pol], mec=INK, mew=0.6, elinewidth=1.4, zorder=4)
-            src.append([xlabel, "Pooled (random effects, post hoc)", pol, p["seeds"], p["re"], p["re_low"], p["re_high"], "pooled"])
-        ax.axhline(1.5, color=GRID, lw=0.6)
-        zero_line(ax)
-        labels = [lab.replace(" (approx. denominator)", "*") for lab in studies] + [f"Pooled ({sum(r['n'] for r in tab if r['policy'] == 'greedy')} seeds)"]
-        ax.set_yticks([ypos[x] for x in studies] + [0.75]); ax.set_yticklabels(labels)
-        ax.tick_params(axis="y", length=0); ax.spines["left"].set_visible(False)
-        ax.set_ylim(0.2, n + 1.6); ax.set_xlabel(xlabel); panel_label(ax, letter)
-    axes[0].set_xlim(-1.2, 4.6); axes[1].set_xlim(0, 23)
-    h = [Line2D([], [], marker=MARK[p], color=COLOR[p], ls="none", ms=4.2, label=NAME[p]) for p in POL]
-    h.append(Line2D([], [], marker="D", color=MUTED, mfc="white", mec=INK, ls="none", ms=4.5, label="Pooled, random effects (post hoc)"))
-    fig.legend(handles=h, loc="lower center", bbox_to_anchor=(0.55, 0.99), ncol=3, frameon=False, handletextpad=0.3, columnspacing=1.4)
-    save(fig, out, "Fig1_replication_canonical_cell", fmts, src, ["outcome", "study", "policy", "n_seeds", "mean", "ci_low", "ci_high", "kind"])
+    for ax, spec, letter in ((axes[0], E, "a"), (axes[1], R, "b")):
+        _fig1_panel(ax, *spec[:3], spec[3], spec[4], src); panel_label(ax, letter)
+    _fig1_legend(fig, 0.55)
+    save(fig, out, "Fig1_replication_canonical_cell", fmts, src, FIG1_HEADER)
+    # the same panels as separate single-column figures (no panel letters)
+    for stem, spec, height in (("Fig1a_replication_battery", E, 2.75), ("Fig1b_replication_ride_time", R, 2.05)):
+        fig, ax = plt.subplots(figsize=(s["single"], height)); src = []
+        _fig1_panel(ax, *spec[:3], spec[3], spec[4], src)
+        h = [Line2D([], [], marker=MARK[p], color=COLOR[p], ls="none", ms=4.2, label=NAME[p]) for p in POL]
+        h.append(Line2D([], [], marker="D", color=MUTED, mfc="white", mec=INK, ls="none", ms=4.5, label="Pooled estimate (post hoc)"))
+        ax.legend(handles=h, loc="lower center", bbox_to_anchor=(0.5, 1.0), ncol=2, frameon=False, handletextpad=0.3,
+                  columnspacing=1.2, borderaxespad=0.1)
+        save(fig, out, stem, fmts, src, FIG1_HEADER)
     g, h = e_pool["greedy"]["all"], e_pool["hungarian"]["all"]; rg, rh = r_pool["greedy"]["all"], r_pool["hungarian"]["all"]
-    return ("Fig. 1. Effect of the energy term in the canonical scenario (12 vehicles, 100 requests, 825 kg / 80 kg, 100% SOC, "
-            "1,800 s window, UTP network, Crr 0.012), replicated on independent workload seeds in every study component. "
-            f"(a) Battery saving; (b) reduction in mean passenger ride time (not recorded in the original 2×2, A or B). Points: "
-            f"paired seed-level means with 95% t intervals. Diamonds: random-effects pooled estimates (post hoc; not prespecified): "
-            f"battery {g['re']:.2f}% [{g['re_low']:.2f}, {g['re_high']:.2f}] Greedy and {h['re']:.2f}% [{h['re_low']:.2f}, "
-            f"{h['re_high']:.2f}] Hungarian ({g['seeds']} seeds); ride {rg['re']:.1f} s [{rg['re_low']:.1f}, {rg['re_high']:.1f}] and "
-            f"{rh['re']:.1f} s [{rh['re_low']:.1f}, {rh['re_high']:.1f}] ({rg['seeds']} seeds). *Original 2×2 uses the condition-mean "
-            "time-only withdrawal as denominator.")
+    scen = ("canonical scenario (12 vehicles, 100 requests, 825 kg / 80 kg, 100% SOC, 1,800 s window, UTP network, Crr 0.012), "
+            "replicated on independent workload seeds")
+    common = "Points: paired seed-level means with 95% t intervals. Diamonds: random-effects pooled estimates (post hoc; not prespecified): "
+    e_txt = (f"{g['re']:.2f}% [{g['re_low']:.2f}, {g['re_high']:.2f}] Greedy and {h['re']:.2f}% [{h['re_low']:.2f}, {h['re_high']:.2f}] "
+             f"Hungarian ({g['seeds']} seeds)")
+    r_txt = (f"{rg['re']:.1f} s [{rg['re_low']:.1f}, {rg['re_high']:.1f}] Greedy and {rh['re']:.1f} s [{rh['re_low']:.1f}, "
+             f"{rh['re_high']:.1f}] Hungarian ({rg['seeds']} seeds)")
+    foot = "*Original 2×2 uses the condition-mean time-only withdrawal as denominator."
+    return "\n\n".join([
+        f"Fig. 1. Effect of the energy term in the {scen} in every study component. (a) Battery saving; (b) reduction in mean "
+        f"passenger ride time (not recorded in the original 2×2, A or B). {common}battery {e_txt}; ride {r_txt}. {foot}",
+        f"Fig. 1a (separate panel). Battery saving with the energy term in the {scen} in all seven study components. {common}{e_txt}. {foot}",
+        f"Fig. 1b (separate panel). Reduction in mean passenger ride time with the energy term in the {scen} in Experiments C–F "
+        f"(ride time is not recorded in the original 2×2, A or B). {common}{r_txt}."])
 
 
 # ---------------------------------------------------------------------------- Fig 2: payload ratio, same-state vs whole-run
-def fig2(s, out, fmts):
+def _fig2_data():
     proto = json.loads((RES / "A_payload/experiment_A_payload.json").read_text())
     rho = {m["id"]: (m["rho_pct"], m.get("physical", True)) for m in proto["design"]["mass_configs"]}
     by = defaultdict(dict)
@@ -160,37 +188,60 @@ def fig2(s, out, fmts):
     for (m, pol, _), d in by.items():
         res[(m, pol)]["whole"].append(100 * (float(d["0"]["battery_Wh"]) - float(d["1"]["battery_Wh"])) / float(d["0"]["battery_Wh"]))
         res[(m, pol)]["local"].append(float(d["1"]["sdec_pct"]))
+    return rho, res
+
+
+def _fig2_panel(ax, pol, rho, res, src, ylabel=True, legend=True):
+    for kind, filled, ls in (("whole", True, "-"), ("local", False, (0, (3, 1.5)))):
+        pts = []
+        for m, (r_, phys) in sorted(rho.items(), key=lambda kv: kv[1][0]):
+            c = ci(res[(m, pol)][kind]); pts.append((r_, c, phys))
+            src.append([NAME[pol], kind, m, r_, phys, c["n"], c["mean"], c["lo"], c["hi"]])
+        phys_pts = [p for p in pts if p[2]]
+        ax.plot([p[0] for p in phys_pts], [p[1]["mean"] for p in phys_pts], color=COLOR[pol], ls=ls, lw=1.1, zorder=2)
+        ax.plot([phys_pts[-1][0], pts[-1][0]], [phys_pts[-1][1]["mean"], pts[-1][1]["mean"]], color=COLOR[pol], ls=":", lw=0.8, zorder=2)
+        for r_, c, phys in pts:
+            ax.errorbar(r_, c["mean"], yerr=[[c["mean"] - c["lo"]], [c["hi"] - c["mean"]]], fmt=MARK[pol], ms=4.2, color=COLOR[pol],
+                        mfc=COLOR[pol] if filled else "white", mec=COLOR[pol], mew=0.9, elinewidth=0.9, alpha=1 if phys else 0.55, zorder=3)
+    ax.axvspan(17, 24, color="#F2F2F2", zorder=0)
+    ax.text(17.3, 5.3, "stress test\n(non-physical)", ha="left", va="top", fontsize=STYLES_ACTIVE["small"], color=MUTED)
+    zero_line(ax, vertical=False)
+    ax.set_xticks([7.4, 9.5, 11.2, 14.0, 22.4]); ax.set_xticklabels(["7.4", "9.5", "11.2", "14.0", "22.4"])
+    ax.set_xlim(6, 24); ax.set_ylim(-0.1, 5.4); ax.set_xlabel("Passenger-to-vehicle load ratio ρ (%)")
+    ax.set_title(NAME[pol], loc="left", color=INK)
+    if ylabel:
+        ax.set_ylabel("Energy saving with energy term (%)")
+    if legend:
+        mh = [Line2D([], [], color=MUTED, ls="-", marker="o", mfc=MUTED, ms=4, label="Whole-run saving"),
+              Line2D([], [], color=MUTED, ls=(0, (3, 1.5)), marker="o", mfc="white", ms=4, label="Same-state decision saving")]
+        ax.legend(handles=mh, loc="upper left", frameon=False, handlelength=2.4, borderaxespad=0.2)
+
+
+FIG2_HEADER = ["policy", "measure", "mass_config", "rho_pct", "physical", "n_seeds", "mean", "ci_low", "ci_high"]
+
+
+def fig2(s, out, fmts):
+    rho, res = _fig2_data()
     fig, axes = plt.subplots(1, 2, figsize=(s["double"], 2.5), sharey=True, gridspec_kw=dict(wspace=0.12))
     src = []
     for ax, pol, letter in zip(axes, POL, "ab"):
-        for kind, filled, ls, lab in (("whole", True, "-", "Whole-run saving"), ("local", False, (0, (3, 1.5)), "Same-state decision saving")):
-            pts = []
-            for m, (r_, phys) in sorted(rho.items(), key=lambda kv: kv[1][0]):
-                c = ci(res[(m, pol)][kind]); pts.append((r_, c, phys))
-                src.append([NAME[pol], kind, m, r_, phys, c["n"], c["mean"], c["lo"], c["hi"]])
-            phys_pts = [p for p in pts if p[2]]
-            ax.plot([p[0] for p in phys_pts], [p[1]["mean"] for p in phys_pts], color=COLOR[pol], ls=ls, lw=1.1, zorder=2)
-            ax.plot([phys_pts[-1][0], pts[-1][0]], [phys_pts[-1][1]["mean"], pts[-1][1]["mean"]], color=COLOR[pol], ls=":", lw=0.8, zorder=2)
-            for r_, c, phys in pts:
-                ax.errorbar(r_, c["mean"], yerr=[[c["mean"] - c["lo"]], [c["hi"] - c["mean"]]], fmt=MARK[pol], ms=4.2, color=COLOR[pol],
-                            mfc=COLOR[pol] if filled else "white", mec=COLOR[pol], mew=0.9, elinewidth=0.9, alpha=1 if phys else 0.55, zorder=3)
-        ax.axvspan(17, 24, color="#F2F2F2", zorder=0)
-        ax.text(17.3, 5.3, "stress test\n(non-physical)", ha="left", va="top", fontsize=STYLES_ACTIVE["small"], color=MUTED)
-        zero_line(ax, vertical=False)
-        ax.set_xticks([7.4, 9.5, 11.2, 14.0, 22.4]); ax.set_xticklabels(["7.4", "9.5", "11.2", "14.0", "22.4"])
-        ax.set_xlim(6, 24); ax.set_xlabel("Passenger-to-vehicle load ratio ρ (%)")
-        ax.set_title(NAME[pol], loc="left", color=INK); panel_label(ax, letter)
-    axes[0].set_ylabel("Energy saving with energy term (%)"); axes[0].set_ylim(-0.1, 5.4)
-    mh = [Line2D([], [], color=MUTED, ls="-", marker="o", mfc=MUTED, ms=4, label="Whole-run saving"),
-          Line2D([], [], color=MUTED, ls=(0, (3, 1.5)), marker="o", mfc="white", ms=4, label="Same-state decision saving")]
-    axes[0].legend(handles=mh, loc="upper left", frameon=False, handlelength=2.4, borderaxespad=0.2)
-    save(fig, out, "Fig2_payload_dose_response", fmts, src, ["policy", "measure", "mass_config", "rho_pct", "physical", "n_seeds", "mean", "ci_low", "ci_high"])
-    return ("Fig. 2. Experiment A: energy saving against the passenger-to-vehicle load ratio ρ for (a) Greedy and (b) Hungarian "
-            "(100 paired seeds per point). Filled markers, solid lines: whole-run battery saving (time-only minus energy-weighted "
+        _fig2_panel(ax, pol, rho, res, src, ylabel=letter == "a", legend=letter == "a"); panel_label(ax, letter)
+    save(fig, out, "Fig2_payload_dose_response", fmts, src, FIG2_HEADER)
+    for stem, pol in (("Fig2a_payload_greedy", "greedy"), ("Fig2b_payload_hungarian", "hungarian")):
+        fig, ax = plt.subplots(figsize=(s["single"], 2.5)); src = []
+        _fig2_panel(ax, pol, rho, res, src)
+        save(fig, out, stem, fmts, src, FIG2_HEADER)
+    defs = ("(100 paired seeds per point). Filled markers, solid lines: whole-run battery saving (time-only minus energy-weighted "
             "withdrawal, % of time-only). Open markers, dashed lines: same-state decision-level saving (planned energy of the "
             "time-only minus the energy-weighted choice in identical fleet states, equal-cardinality rounds, % of run withdrawal). "
-            "95% t intervals. The shaded 160 kg-per-passenger point is a non-physical stress test (exploratory). Prespecified A1 "
-            "(14.0% vs 7.4%, decision level): +0.67 pp Hungarian, +0.60 pp Greedy, both Holm p = 4×10⁻⁶, below the 1 pp margin.")
+            "95% t intervals. The shaded 160 kg-per-passenger point is a non-physical stress test (exploratory).")
+    return "\n\n".join([
+        f"Fig. 2. Experiment A: energy saving against the passenger-to-vehicle load ratio ρ for (a) Greedy and (b) Hungarian {defs} "
+        "Prespecified A1 (14.0% vs 7.4%, decision level): +0.67 pp Hungarian, +0.60 pp Greedy, both Holm p = 4×10⁻⁶, below the 1 pp margin.",
+        f"Fig. 2a (separate panel). Experiment A, Greedy assignment: energy saving against the passenger-to-vehicle load ratio ρ {defs} "
+        "Prespecified A1 (decision level, 14.0% vs 7.4%): +0.60 pp, Holm p = 4×10⁻⁶, below the 1 pp margin.",
+        f"Fig. 2b (separate panel). Experiment A, Hungarian assignment: energy saving against the passenger-to-vehicle load ratio ρ {defs} "
+        "Prespecified A1 (decision level, 14.0% vs 7.4%): +0.67 pp, Holm p = 4×10⁻⁶, below the 1 pp margin."])
 
 
 # ---------------------------------------------------------------------------------------- Fig 3: energy-weight sweep (D)
