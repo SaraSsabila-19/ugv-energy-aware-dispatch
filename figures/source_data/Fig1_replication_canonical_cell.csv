@@ -1,0 +1,27 @@
+outcome,study,policy,n_seeds,mean,ci_low,ci_high,kind
+Battery saving (%),Original 2x2 (approx. denominator),greedy,40,0.8356095683448117,-0.4772183143070743,2.1484374509966977,study
+Battery saving (%),A (payload),greedy,100,2.488950434567489,1.8089847560678654,3.168916113067113,study
+Battery saving (%),B (fleet),greedy,40,1.4078176785804442,-0.04867478916463974,2.8643101463255283,study
+Battery saving (%),C (dynamics),greedy,40,0.3140284456791537,-0.7707367776635103,1.398793669021818,study
+Battery saving (%),D (cost proxy),greedy,40,2.3657573503930065,1.2218745705366751,3.5096401302493376,study
+Battery saving (%),E (network),greedy,40,1.2111060396662203,0.20524824427933064,2.21696383505311,study
+Battery saving (%),F (road load),greedy,40,2.572359431297898,1.1059640647467825,4.0387547978490135,study
+Battery saving (%),"Pooled (random effects, post hoc)",greedy,340,1.6151542685322606,0.9138610851807638,2.3164474518837572,pooled
+Battery saving (%),Original 2x2 (approx. denominator),hungarian,40,1.0288359037478507,-0.007514519067643111,2.0651863265633446,study
+Battery saving (%),A (payload),hungarian,100,1.7169957667768114,0.8432214253824487,2.5907701081711743,study
+Battery saving (%),B (fleet),hungarian,40,3.190154558855351,1.9935807922815312,4.386728325429171,study
+Battery saving (%),C (dynamics),hungarian,40,1.5002613164716923,-0.10777858930401418,3.1083012222473987,study
+Battery saving (%),D (cost proxy),hungarian,40,1.2575255662179243,0.09180400049953996,2.423247131936309,study
+Battery saving (%),E (network),hungarian,40,1.5777153221490803,0.18179424841747416,2.9736363958806864,study
+Battery saving (%),F (road load),hungarian,40,1.6390299898483496,0.1866167529452194,3.0914432267514798,study
+Battery saving (%),"Pooled (random effects, post hoc)",hungarian,340,1.6961713891020929,1.162149339559333,2.2301934386448528,pooled
+Ride-time reduction (s),C (dynamics),greedy,40,12.057876925000006,7.460230944190751,16.65552290580926,study
+Ride-time reduction (s),D (cost proxy),greedy,40,15.387836875000003,10.652900496871547,20.122773253128457,study
+Ride-time reduction (s),E (network),greedy,40,14.365154725000004,7.510988449730074,21.219321000269932,study
+Ride-time reduction (s),F (road load),greedy,40,13.159116399999998,8.14895514940845,18.169277650591546,study
+Ride-time reduction (s),"Pooled (random effects, post hoc)",greedy,160,13.636028083700982,11.159043548301065,16.1130126191009,pooled
+Ride-time reduction (s),C (dynamics),hungarian,40,9.574609,3.423264948037522,15.72595305196248,study
+Ride-time reduction (s),D (cost proxy),hungarian,40,11.434798775,6.140726583582464,16.72887096641754,study
+Ride-time reduction (s),E (network),hungarian,40,13.680181925000005,9.160432687066972,18.199931162933037,study
+Ride-time reduction (s),F (road load),hungarian,40,8.468769874999996,3.665812370868827,13.271727379131164,study
+Ride-time reduction (s),"Pooled (random effects, post hoc)",hungarian,160,10.995576484380523,8.529636295836857,13.461516672924189,pooled

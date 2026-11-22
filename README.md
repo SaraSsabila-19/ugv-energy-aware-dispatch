@@ -30,7 +30,14 @@ To re-execute archived simulations from this repository and compare them value b
 python verification/reproduce_sample_runs.py          # 4 Experiment A runs; expected: "ALL REPRODUCED"
 ```
 
-`make verify`, `make synthesis`, `make reproduce` and `make test-kits` do the same. [docs/REPRODUCE.md](docs/REPRODUCE.md) explains how to rerun any complete campaign.
+Publication figures (about 20 seconds; PDF with embedded fonts, 600-dpi PNG and TIFF, plotted numbers as CSV, draft captions):
+
+```bash
+python analysis/make_figures.py                  # Elsevier column widths (90 / 140 / 190 mm) -> figures/
+python analysis/make_figures.py --style ieee     # IEEE widths (3.5 / 7.16 in)
+```
+
+`make verify`, `make synthesis`, `make figures`, `make reproduce` and `make test-kits` do the same. [docs/REPRODUCE.md](docs/REPRODUCE.md) explains how to rerun any complete campaign.
 
 ## Main findings
 
@@ -63,6 +70,8 @@ experiments/                 exact experiment code, byte-identical to the kit th
   F_road_load/               F measurement-informed road-load sensitivity (kit v7)          960 runs
 results/                     protocols, validation reports, run-level tables, contrasts and figures per campaign
 analysis/synthesis.py        post hoc replication synthesis of the canonical cell; outputs in analysis/output/
+analysis/make_figures.py     the six paper figures -> figures/ (with source_data/ and CAPTIONS.md)
+figures/                     generated figures (PDF, PNG, TIFF), plotted data and draft captions
 verification/                repository verifier, sample-run reproduction, Experiment C native reference check
 archives/                    complete original campaign export archives (with per-run outputs) and kit provenance
 docs/                        reproduction guide, provenance and deviations, data availability statement
