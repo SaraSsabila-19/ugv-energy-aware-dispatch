@@ -1,0 +1,17 @@
+{
+  "protocol_id": "C_NATIVE_REFERENCE_CHECK",
+  "status": "verification only: native kit v3.1 reruns of Experiment C all-off/all-on references for the first four C seeds (fixed before running; not selected by outcome)",
+  "excluded_seeds": [],
+  "design": {
+    "seeds": [801001, 802001, 803001, 804001],
+    "fleet_configs": [{"id": "V12R100", "vehicles": 12, "requests": 100}],
+    "mass_configs": [{"id": "M825_P80", "overrides": {}}],
+    "algorithms": ["greedy", "hungarian"],
+    "initial_soc": [1.0],
+    "alpha_energy": [0, 1],
+    "beta_time": 1.0,
+    "soc_cost_weight": 0.0,
+    "probe": false
+  },
+  "contrasts": []
+}

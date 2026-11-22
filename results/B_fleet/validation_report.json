@@ -1,0 +1,69 @@
+{
+  "checks": {
+    "accounting": {
+      "details": [],
+      "status": "PASS"
+    },
+    "blocking": {
+      "details": [],
+      "status": "PASS"
+    },
+    "completeness": {
+      "details": [],
+      "status": "PASS"
+    },
+    "cost_change": {
+      "details": [],
+      "status": "PASS"
+    },
+    "coverage": {
+      "details": [
+        "10 runs had 11 unequal-cardinality rounds (excluded from the decision-level comparison by definition); 0 legacy records need repair; 10 verified repaired probe records used"
+      ],
+      "status": "INFO"
+    },
+    "fleet": {
+      "details": [],
+      "status": "PASS"
+    },
+    "overrides": {
+      "details": [],
+      "status": "PASS"
+    },
+    "probe": {
+      "details": [],
+      "status": "PASS"
+    },
+    "repair": {
+      "details": [
+        "10 repaired runs re-verified against their originals"
+      ],
+      "status": "PASS"
+    },
+    "settings": {
+      "details": [],
+      "status": "PASS"
+    },
+    "source": {
+      "details": [],
+      "status": "PASS"
+    },
+    "workload": {
+      "details": [],
+      "status": "PASS"
+    }
+  },
+  "coverage": {
+    "legacy_incomplete": [],
+    "repaired_used": 10,
+    "runs_with_unequal_rounds": 10,
+    "unequal_rounds": 11
+  },
+  "failed": 0,
+  "missing": 0,
+  "overall": "PASS",
+  "protocol_id": "EXP_B_FLEET",
+  "repair_dir": "/home/sara/ugv_v3_campaigns/experiment_B_fleet_probe_repair_v3.1",
+  "runs_expected": 960,
+  "runs_validated": 960
+}

@@ -1,0 +1,8 @@
+{
+  "analysis_sha256": "a2e919e9592d96876bc1f14e69d3babb541bb44aa813ac64a8076d79c623bc2a",
+  "expected": 1120,
+  "native_controls": 0,
+  "protocol_sha256": "38961a6f8de1421a7f0843cf8f69ad3a27caf19b9c36a2d41ce4b5a90342b923",
+  "status": "PASS",
+  "validated": 1120
+}

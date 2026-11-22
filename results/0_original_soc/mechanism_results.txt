@@ -1,0 +1,84 @@
+320 runs, 40 seeds
+
+== 1. Condition means (per run) ==
+alg soc a | done | bat Wh | driving | dwell | parked | km | Wh/km | charged Wh | grid Wh | sim dur s | wait s
+greedy 1.0 0 | 4000 | 5844.8 | 5823.9 | 20.8 | 0.0 | 105.42 | 55.25 | 559.3 | 933.9 | 2753 | 283.46
+greedy 1.0 1 | 4000 | 5795.9 | 5775.1 | 20.8 | 0.0 | 104.82 | 55.10 | 534.9 | 904.1 | 2755 | 287.76
+greedy 0.25 0 | 3902 | 6040.5 | 6020.2 | 20.3 | 0.0 | 111.25 | 54.11 | 4307.9 | 5825.4 | 2783 | 287.67
+greedy 0.25 1 | 3902 | 5984.2 | 5963.9 | 20.3 | 0.0 | 110.12 | 54.16 | 4371.6 | 5911.6 | 2783 | 290.91
+hungarian 1.0 0 | 4000 | 5841.2 | 5820.3 | 20.8 | 0.0 | 104.99 | 55.44 | 528.6 | 893.6 | 2746 | 285.53
+hungarian 1.0 1 | 4000 | 5781.1 | 5760.2 | 20.8 | 0.0 | 103.94 | 55.42 | 546.5 | 922.6 | 2762 | 284.71
+hungarian 0.25 0 | 3904 | 6006.8 | 5986.5 | 20.3 | 0.0 | 109.92 | 54.46 | 4655.8 | 6295.9 | 2850 | 288.90
+hungarian 0.25 1 | 3915 | 5975.1 | 5954.7 | 20.4 | 0.0 | 109.42 | 54.42 | 4500.5 | 6085.9 | 2806 | 293.20
+
+== 2. Simple effects of alpha (a1-a0), with Monte Carlo sign-flip p (unadjusted) ==
+greedy     1.0 bat   mean   -48.839 CI [-125.571, +27.892] sd  239.924 p 0.2072
+greedy     1.0 km    mean    -0.599 CI [-2.373, +1.175] sd    5.548 p 0.5017
+greedy     1.0 drv   mean   -48.839 CI [-125.571, +27.892] sd  239.924 p 0.2072
+greedy     1.0 wait  mean    +4.302 CI [-1.844, +10.448] sd   19.218 p 0.1648
+greedy     1.0 done  mean    +0.000 CI [+0.000, +0.000] sd    0.000 p 1.0000
+greedy     1.0 dur   mean    +2.250 CI [-48.066, +52.566] sd  157.329 p 0.9287
+greedy     1.0 chg   mean   -24.393 CI [-77.824, +29.038] sd  167.068 p 0.3613
+greedy    0.25 bat   mean   -56.252 CI [-111.609, -0.895] sd  173.091 p 0.0458
+greedy    0.25 km    mean    -1.129 CI [-2.470, +0.213] sd    4.194 p 0.0974
+greedy    0.25 drv   mean   -56.252 CI [-111.630, -0.875] sd  173.155 p 0.0460
+greedy    0.25 wait  mean    +3.240 CI [-3.875, +10.354] sd   22.246 p 0.3615
+greedy    0.25 done  mean    +0.000 CI [-0.910, +0.910] sd    2.847 p 1.0000
+greedy    0.25 dur   mean    +0.008 CI [-47.614, +47.629] sd  148.902 p 1.0000
+greedy    0.25 chg   mean   +63.701 CI [-122.037, +249.439] sd  580.766 p 0.4910
+hungarian  1.0 bat   mean   -60.096 CI [-120.631, +0.439] sd  189.282 p 0.0523
+hungarian  1.0 km    mean    -1.056 CI [-2.486, +0.373] sd    4.469 p 0.1436
+hungarian  1.0 drv   mean   -60.096 CI [-120.631, +0.439] sd  189.282 p 0.0523
+hungarian  1.0 wait  mean    -0.819 CI [-5.336, +3.699] sd   14.126 p 0.7167
+hungarian  1.0 done  mean    +0.000 CI [+0.000, +0.000] sd    0.000 p 1.0000
+hungarian  1.0 dur   mean   +15.442 CI [-30.522, +61.407] sd  143.721 p 0.5030
+hungarian  1.0 chg   mean   +17.910 CI [-37.275, +73.095] sd  172.553 p 0.5170
+hungarian 0.25 bat   mean   -31.722 CI [-101.008, +37.565] sd  216.645 p 0.3593
+hungarian 0.25 km    mean    -0.498 CI [-2.118, +1.122] sd    5.065 p 0.5365
+hungarian 0.25 drv   mean   -31.779 CI [-101.068, +37.509] sd  216.651 p 0.3584
+hungarian 0.25 wait  mean    +4.306 CI [-1.451, +10.062] sd   17.999 p 0.1378
+hungarian 0.25 done  mean    +0.275 CI [-0.369, +0.919] sd    2.013 p 0.4392
+hungarian 0.25 dur   mean   -43.875 CI [-101.415, +13.665] sd  179.917 p 0.1305
+hungarian 0.25 chg   mean  -155.265 CI [-378.825, +68.295] sd  699.028 p 0.1674
+
+== 3. Energy saving explained by distance: regress D_bat on D_km across seeds ==
+greedy 1.0: slope 42.3 Wh/km, intercept -23.5 Wh, R^2 0.956
+greedy 0.25: slope 39.7 Wh/km, intercept -11.4 Wh, R^2 0.926
+hungarian 1.0: slope 41.0 Wh/km, intercept -16.8 Wh, R^2 0.935
+hungarian 0.25: slope 41.7 Wh/km, intercept -11.0 Wh, R^2 0.949
+
+== 4. Pooled within-request energy-duration correlation (cost diagnostics) ==
+greedy 1.0 a0: r = 0.9971
+greedy 1.0 a1: r = 0.9972
+greedy 0.25 a0: r = 0.9974
+greedy 0.25 a1: r = 0.9974
+hungarian 1.0 a0: r = 0.9973
+hungarian 1.0 a1: r = 0.9973
+hungarian 0.25 a0: r = 0.9976
+hungarian 0.25 a1: r = 0.9976
+ALL 320: r = 0.9973
+
+== 5. Failures at 25% SOC ==
+greedy a0: 98 failures; reasons {'pickup_deadline_exceeded': 98}; all-candidates-energy-blocked 70; created-time median 1595 s, 10th pct 1439 s; seeds with any failure 28/40
+greedy a1: 98 failures; reasons {'pickup_deadline_exceeded': 98}; all-candidates-energy-blocked 76; created-time median 1591 s, 10th pct 1440 s; seeds with any failure 29/40
+  greedy: seeds with identical failed-request sets a0 vs a1: 11/40; mean Jaccard overlap where any fail: 0.27
+hungarian a0: 96 failures; reasons {'pickup_deadline_exceeded': 96}; all-candidates-energy-blocked 73; created-time median 1611 s, 10th pct 1438 s; seeds with any failure 26/40
+hungarian a1: 85 failures; reasons {'pickup_deadline_exceeded': 85}; all-candidates-energy-blocked 62; created-time median 1600 s, 10th pct 1434 s; seeds with any failure 26/40
+  hungarian: seeds with identical failed-request sets a0 vs a1: 10/40; mean Jaccard overlap where any fail: 0.23
+
+== 6. Energy budget at 25% SOC ==
+greedy a0: withdrawal 6040 Wh vs initial above-reserve 5400 Wh; charged 4308 Wh; min fleet SOC 1802 Wh
+greedy a1: withdrawal 5984 Wh vs initial above-reserve 5400 Wh; charged 4372 Wh; min fleet SOC 1802 Wh
+hungarian a0: withdrawal 6007 Wh vs initial above-reserve 5400 Wh; charged 4656 Wh; min fleet SOC 1802 Wh
+hungarian a1: withdrawal 5975 Wh vs initial above-reserve 5400 Wh; charged 4501 Wh; min fleet SOC 1802 Wh
+stored charging power per idle vehicle: 1232.5 W
+greedy 1.0: mean fleet saving 48.8 Wh/run = 4.07 Wh/vehicle = 11.9 s of depot charging per vehicle
+greedy 0.25: mean fleet saving 56.3 Wh/run = 4.69 Wh/vehicle = 13.7 s of depot charging per vehicle
+hungarian 1.0: mean fleet saving 60.1 Wh/run = 5.01 Wh/vehicle = 14.6 s of depot charging per vehicle
+hungarian 0.25: mean fleet saving 31.7 Wh/run = 2.64 Wh/vehicle = 7.7 s of depot charging per vehicle
+
+== 7. Per-seed spread vs mean effect (battery) ==
+greedy 1.0: mean -48.8, sd 239.9, seeds saving 24/40, range [-806, +586]
+greedy 0.25: mean -56.3, sd 173.1, seeds saving 24/40, range [-479, +267]
+hungarian 1.0: mean -60.1, sd 189.3, seeds saving 20/40, range [-409, +296]
+hungarian 0.25: mean -31.7, sd 216.6, seeds saving 23/40, range [-454, +440]

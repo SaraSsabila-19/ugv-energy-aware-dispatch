@@ -1,0 +1,60 @@
+{
+  "checks": {
+    "accounting": {
+      "details": [],
+      "status": "PASS"
+    },
+    "blocking": {
+      "details": [],
+      "status": "PASS"
+    },
+    "completeness": {
+      "details": [],
+      "status": "PASS"
+    },
+    "cost_change": {
+      "details": [],
+      "status": "PASS"
+    },
+    "fleet": {
+      "details": [],
+      "status": "PASS"
+    },
+    "overrides": {
+      "details": [],
+      "status": "PASS"
+    },
+    "probe": {
+      "details": [
+        "EXP_B_FLEET__V12R100__M825_P80__greedy__soc25__a0__seed704001: planned energy 6048.2 vs battery 6108.0 differ >0.5%",
+        "EXP_B_FLEET__V12R100__M825_P80__greedy__soc25__a0__seed731001: planned energy 5668.3 vs battery 5738.3 differ >0.5%",
+        "EXP_B_FLEET__V24R200__M825_P80__greedy__soc25__a0__seed717001: planned energy 11289.7 vs battery 11468.4 differ >0.5%",
+        "EXP_B_FLEET__V24R200__M825_P80__greedy__soc25__a0__seed722001: planned energy 11032.3 vs battery 11322.1 differ >0.5%",
+        "EXP_B_FLEET__V24R200__M825_P80__greedy__soc25__a0__seed735001: planned energy 11839.0 vs battery 11957.4 differ >0.5%",
+        "EXP_B_FLEET__V24R200__M825_P80__greedy__soc25__a0__seed739001: planned energy 10346.6 vs battery 10634.6 differ >0.5%",
+        "EXP_B_FLEET__V24R200__M825_P80__greedy__soc25__a1__seed718001: planned energy 11011.5 vs battery 11183.5 differ >0.5%",
+        "EXP_B_FLEET__V24R200__M825_P80__greedy__soc25__a1__seed722001: planned energy 10720.0 vs battery 11259.0 differ >0.5%",
+        "EXP_B_FLEET__V24R200__M825_P80__greedy__soc25__a1__seed739001: planned energy 10287.5 vs battery 10647.3 differ >0.5%"
+      ],
+      "status": "FAIL"
+    },
+    "settings": {
+      "details": [],
+      "status": "PASS"
+    },
+    "source": {
+      "details": [],
+      "status": "PASS"
+    },
+    "workload": {
+      "details": [],
+      "status": "PASS"
+    }
+  },
+  "failed": 0,
+  "missing": 0,
+  "overall": "FAIL",
+  "protocol_id": "EXP_B_FLEET",
+  "runs_expected": 960,
+  "runs_validated": 960
+}

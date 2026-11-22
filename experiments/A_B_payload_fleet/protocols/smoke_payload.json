@@ -1,0 +1,79 @@
+{
+  "protocol_id": "SMOKE_V3_PAYLOAD",
+  "version": "1.0",
+  "status": "smoke test only; seeds excluded from all confirmatory analyses",
+  "excluded_seeds": [],
+  "design": {
+    "seeds": [
+      904001
+    ],
+    "fleet_configs": [
+      {
+        "id": "V12R100",
+        "vehicles": 12,
+        "requests": 100
+      }
+    ],
+    "mass_configs": [
+      {
+        "id": "M825_P80",
+        "overrides": {},
+        "rho_pct": 7.4,
+        "physical": true,
+        "basis": "Frozen baseline: GMTLSV six-seat enclosed cart, 825 kg incl. batteries; 80 kg per passenger."
+      },
+      {
+        "id": "M587_P80",
+        "overrides": {
+          "UGV_EMPTY_MASS_KG": 586.5
+        },
+        "rho_pct": 9.5,
+        "physical": true,
+        "basis": "Six-seat open electric cart class with lead-acid pack: Club Car Onward 6-passenger HP Electric, non-lifted, curb 1,293 lb (586.5 kg)."
+      },
+      {
+        "id": "M456_P80",
+        "overrides": {
+          "UGV_EMPTY_MASS_KG": 455.8
+        },
+        "rho_pct": 11.2,
+        "physical": true,
+        "basis": "Six-seat lithium cart class: Club Car Onward 6-passenger XR Lithium, non-lifted, curb 1,005 lb (455.8 kg)."
+      },
+      {
+        "id": "M456_P100",
+        "overrides": {
+          "UGV_EMPTY_MASS_KG": 455.8,
+          "UGV_PASSENGER_MASS_KG": 100.0
+        },
+        "rho_pct": 14.0,
+        "physical": true,
+        "basis": "Same lithium cart; passengers carrying about 20 kg of luggage each. Full payload 600 kg, within the roughly 454-635 kg (1,000-1,400 lb) load range quoted for six-seat carts."
+      },
+      {
+        "id": "M456_P160_STRESS",
+        "overrides": {
+          "UGV_EMPTY_MASS_KG": 455.8,
+          "UGV_PASSENGER_MASS_KG": 160.0
+        },
+        "rho_pct": 22.4,
+        "physical": false,
+        "basis": "NON-PHYSICAL model stress level (960 kg payload exceeds cart load ratings). Used only to test the functional form of the mechanism; never interpreted as an operating scenario."
+      }
+    ],
+    "algorithms": [
+      "hungarian"
+    ],
+    "initial_soc": [
+      1.0
+    ],
+    "alpha_energy": [
+      0,
+      1
+    ],
+    "beta_time": 1.0,
+    "soc_cost_weight": 0.0,
+    "probe": true
+  },
+  "contrasts": []
+}

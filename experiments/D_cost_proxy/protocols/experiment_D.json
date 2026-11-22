@@ -1,0 +1,15 @@
+{
+  "protocol_id": "EXP_D_EQUIVALENCE",
+  "pilot": false,
+  "seeds": "1001001:1040001:1000",
+  "algorithms": ["greedy", "hungarian"],
+  "mass_configs": {"M825_P80": [825, 80], "M456_P100": [455.8, 100]},
+  "arms": {"e0": 0, "e025": 0.25, "e05": 0.5, "e1": 1, "e2": 2, "e4": 4, "pk1": 1},
+  "fleet": 12, "requests": 100, "soc": 1.0,
+  "margins": {"battery_pp": 1.0, "wait_s": 10.0, "ride_s": 10.0, "completed": 1.0},
+  "inference": {"unit": "paired seed", "confidence": 0.95, "equivalence": "paired t TOST, Holm over 16 tests", "energy_sweep": "two-sided paired sign-flip, Holm over 24 tests", "randomization_draws": 100000, "randomization_seed": 52601},
+  "estimands": {"battery_pp": "100*(reference battery - arm battery)/e0 battery, within seed", "service": "arm minus reference for completed; reference minus arm for seconds", "local": "same-state native e1 versus pk1 in native e1 runs, equal cardinality only for energy/time increments; disagreement includes unequal rounds"},
+  "surrogate": "Cpk = delta_t_positive/600 + (kappa*delta_t_positive + e1*delta_passenger_km)/100; signed passenger-km increment, no clipping; true energy feasibility unchanged. Cruise coefficients fixed by frozen physics; no fitting.",
+  "decision_rule": "Equivalence is supported in a mass-policy cell only if every Holm-adjusted TOST p < 0.05. A non-significant difference is not equivalence. Pareto and same-state summaries descriptive. Report all arms. No tuning on confirmatory seeds.",
+  "excluded_pilot_seed": 990001
+}

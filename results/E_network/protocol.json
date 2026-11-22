@@ -1,0 +1,54 @@
+{
+  "accounting_relative_tolerance": 0.005,
+  "algorithms": [
+    "greedy",
+    "hungarian"
+  ],
+  "alpha_energy": [
+    0,
+    1
+  ],
+  "arrival_window_s": [
+    1800,
+    600
+  ],
+  "confirmatory_runs": 640,
+  "inference": {
+    "confidence_level": 0.95,
+    "holm_families": {
+      "interaction": 8,
+      "simple": 8
+    },
+    "randomization_draws": 100000,
+    "randomization_seed": 61001
+  },
+  "initial_soc": 1.0,
+  "limitations": "Different real OSM geometry with synthetic mapped demand and depot locations, not observed UM demand or evidence of legal deployability. Same frozen undirected flat-road physics and dispatch policies. No third policy; no tuning based on pilot or confirmation. Pilot seed excluded from inference.",
+  "mass_kg": [
+    825,
+    80
+  ],
+  "networks": [
+    "UTP",
+    "UM_district"
+  ],
+  "pilot_runs": 16,
+  "pilot_seeds": [
+    1090001
+  ],
+  "primary_estimand": "Mean paired battery saving, 100*(off-on)/off, per seed in each of 8 cells; network and arrival-window difference-in-differences in percentage points (UM minus UTP, 600 minus 1800)",
+  "protocol_id": "EXP_E_NETWORK",
+  "requests": 100,
+  "secondary": [
+    "completion",
+    "pickup waiting",
+    "passenger ride time",
+    "battery Wh per completed",
+    "distance",
+    "grid Wh",
+    "within-request energy-time correlation"
+  ],
+  "seeds": "1101001:1140001:1000",
+  "service_guard": "Descriptive guard: unadjusted 95% CI lower bound for on-minus-off completed requests strictly above -1 per 100, as well as positive energy saving with Holm p<0.05. Not formal joint noninferiority.",
+  "vehicles": 12
+}

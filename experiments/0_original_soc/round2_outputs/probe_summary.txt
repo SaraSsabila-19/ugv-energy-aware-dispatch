@@ -1,0 +1,11 @@
+probe runs identical to confirmatory runs: 80/80
+policy soc alpha | runs | dispatch rounds | rounds where the other alpha picks a different matching | selected pairs | pairs whose vehicle-request match changes | insertion order changes (of selected pairs) | of busy-vehicle pairs | mean dE, dT of changed insertions (active - alt) | pooled pair r
+('greedy', '0.25', '0') | 10 | 501 | 31 (6.2%) | 973 | 40 (4.1%) | 90 (9.2%) | 10.9% of 824 | +1.36 Wh, -1.16 s | 0.9975
+('greedy', '0.25', '1') | 10 | 506 | 27 (5.3%) | 980 | 33 (3.4%) | 76 (7.8%) | 9.2% of 830 | -1.26 Wh, +0.74 s | 0.9975
+('greedy', '1.0', '0') | 10 | 494 | 42 (8.5%) | 1000 | 56 (5.6%) | 93 (9.3%) | 10.6% of 876 | +1.36 Wh, -1.41 s | 0.9973
+('greedy', '1.0', '1') | 10 | 494 | 31 (6.3%) | 1000 | 40 (4.0%) | 81 (8.1%) | 9.3% of 874 | -1.39 Wh, +0.84 s | 0.9974
+('hungarian', '0.25', '0') | 10 | 493 | 26 (5.3%) | 973 | 34 (3.5%) | 89 (9.1%) | 10.9% of 820 | +1.22 Wh, -1.02 s | 0.9977
+('hungarian', '0.25', '1') | 10 | 497 | 24 (4.8%) | 977 | 34 (3.5%) | 83 (8.5%) | 10.1% of 824 | -1.30 Wh, +0.94 s | 0.9976
+('hungarian', '1.0', '0') | 10 | 494 | 34 (6.9%) | 1000 | 44 (4.4%) | 85 (8.5%) | 9.7% of 874 | +1.35 Wh, -1.52 s | 0.9976
+('hungarian', '1.0', '1') | 10 | 494 | 31 (6.3%) | 1000 | 45 (4.5%) | 81 (8.1%) | 9.3% of 873 | -1.19 Wh, +1.08 s | 0.9973
+ALL: matching changed in 246/3973 rounds (6.2%), 326/7903 pairs; insertion order changed for 678/7903 selected pairs (8.6%)

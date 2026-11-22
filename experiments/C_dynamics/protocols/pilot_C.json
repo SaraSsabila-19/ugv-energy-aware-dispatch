@@ -1,0 +1,7 @@
+{
+  "protocol_id": "PILOT_C_IMPULSE",
+  "pilot": true,
+  "seeds": [951001],
+  "algorithms": ["greedy", "hungarian"],
+  "schedule": "Full pulse and prefix ladder on one excluded seed with independent uninstrumented all-off and all-on controls. Technical checks only; do not tune confirmatory hypotheses with pilot effect estimates."
+}

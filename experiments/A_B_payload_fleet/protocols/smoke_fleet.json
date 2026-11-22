@@ -1,0 +1,52 @@
+{
+  "protocol_id": "SMOKE_V3",
+  "version": "1.0",
+  "status": "smoke test only; seeds excluded from all confirmatory analyses",
+  "excluded_seeds": [],
+  "design": {
+    "seeds": [
+      904001
+    ],
+    "fleet_configs": [
+      {
+        "id": "V12R100",
+        "vehicles": 12,
+        "requests": 100,
+        "note": "baseline S4; replicates the 2x2 on fresh seeds"
+      },
+      {
+        "id": "V24R100",
+        "vehicles": 24,
+        "requests": 100,
+        "note": "S3: fleet doubled, identical requests per seed (fleet-size effect at fixed demand)"
+      },
+      {
+        "id": "V24R200",
+        "vehicles": 24,
+        "requests": 200,
+        "note": "fleet and demand doubled: same 8.33 requests per vehicle as V12R100 (scale effect at fixed intensity)"
+      }
+    ],
+    "mass_configs": [
+      {
+        "id": "M825_P80",
+        "overrides": {}
+      }
+    ],
+    "algorithms": [
+      "hungarian"
+    ],
+    "initial_soc": [
+      1.0,
+      0.25
+    ],
+    "alpha_energy": [
+      0,
+      1
+    ],
+    "beta_time": 1.0,
+    "soc_cost_weight": 0.0,
+    "probe": true
+  },
+  "contrasts": []
+}

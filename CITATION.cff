@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use this software or data, please cite it as below. The associated journal article is pending."
+type: software
+title: "ugv-energy-aware-dispatch: Reproducibility package for 'When does energy-aware online dispatch save energy?'"
+abstract: >-
+  Frozen simulator, prespecified protocols, experiment code, complete campaign archives (14,013 validated simulation
+  runs), analysis tables and verification scripts for a matched-seed study of energy-aware online vehicle-request
+  assignment in an electric ride-pooling fleet.
+authors:
+  - family-names: "Salsabila"
+    given-names: "Saraban"
+version: "1.0.0"
+date-released: "2026-11-22"
+license: MIT
+repository-code: "https://github.com/SaraSsabila-19/ugv-energy-aware-dispatch"
+keywords:
+  - energy-aware dispatch
+  - online vehicle assignment
+  - electric vehicle fleets
+  - ride-pooling
+  - simulation
+  - reproducibility

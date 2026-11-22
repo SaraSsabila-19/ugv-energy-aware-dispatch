@@ -1,0 +1,7 @@
+{
+  "campaign": "/home/sara/ugv_v3_campaigns/experiment_A_payload",
+  "created": "20261121T152221",
+  "frozen_app_sha256": "7b52bb550414469937da3098f91313b366137d43bd48b8465b840a97bffeb0a0",
+  "kit_version": "3.1.0",
+  "runs_exported": 2000
+}

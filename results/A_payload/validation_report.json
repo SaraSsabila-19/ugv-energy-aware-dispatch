@@ -1,0 +1,63 @@
+{
+  "checks": {
+    "accounting": {
+      "details": [],
+      "status": "PASS"
+    },
+    "blocking": {
+      "details": [],
+      "status": "PASS"
+    },
+    "completeness": {
+      "details": [],
+      "status": "PASS"
+    },
+    "cost_change": {
+      "details": [],
+      "status": "PASS"
+    },
+    "coverage": {
+      "details": [
+        "2 runs had 2 unequal-cardinality rounds (excluded from the decision-level comparison by definition); 0 legacy records need repair; 0 verified repaired probe records used"
+      ],
+      "status": "INFO"
+    },
+    "fleet": {
+      "details": [],
+      "status": "PASS"
+    },
+    "overrides": {
+      "details": [],
+      "status": "PASS"
+    },
+    "probe": {
+      "details": [],
+      "status": "PASS"
+    },
+    "settings": {
+      "details": [],
+      "status": "PASS"
+    },
+    "source": {
+      "details": [],
+      "status": "PASS"
+    },
+    "workload": {
+      "details": [],
+      "status": "PASS"
+    }
+  },
+  "coverage": {
+    "legacy_incomplete": [],
+    "repaired_used": 0,
+    "runs_with_unequal_rounds": 2,
+    "unequal_rounds": 2
+  },
+  "failed": 0,
+  "missing": 0,
+  "overall": "PASS",
+  "protocol_id": "EXP_A_PAYLOAD",
+  "repair_dir": null,
+  "runs_expected": 2000,
+  "runs_validated": 2000
+}

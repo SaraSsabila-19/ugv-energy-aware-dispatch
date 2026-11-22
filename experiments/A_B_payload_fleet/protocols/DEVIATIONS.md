@@ -1,0 +1,9 @@
+# Deviations log
+
+Record here any change to `experiment_A_payload.json` or `experiment_B_fleet.json` made after the first confirmatory run,
+any rerun outside the documented resume procedure, and any excluded run. For each entry give: date, protocol id, what
+changed, why, and which results it affects. Report results under the original protocol as well.
+
+| Date | Protocol | Change | Reason | Affected results |
+| --- | --- | --- | --- | --- |
+| 2026-11-21 | EXP_B_FLEET (and kit for EXP_A_PAYLOAD) | Probe accounting correction, kit v3.1. The v3.0 probe added `plan_energy_active_Wh` only in rounds where the energy-term and time-only matchings assigned the same number of requests, but the validator compared that sum with total battery withdrawal. In Experiment B, 10 of 960 runs had such rounds, and 9 failed the 0.5% check, as reported by the user. Unequal cardinality is impossible for Hungarian, which maximises cardinality first, so these are expected to be Greedy runs; the repair report lists them. v3.1 records the all-round planned energy separately, checks it against battery withdrawal (threshold unchanged at 0.5%) and against the simulator's own assignment log (1e-9 relative), and re-executes only the affected runs into a separate repair folder. The original 960 records are preserved unchanged. Each repaired run must reproduce its original simulator outputs, workload hash and every original probe field exactly. | The validator compared a comparison-only sum with the run total. The simulation, the outcomes and the estimand were not at fault. | None. `sdec_pct` keeps its v3.0 definition (equal-cardinality rounds only, divided by battery withdrawal), and no simulator outcome changes. Protocol JSON files are byte-identical to v3.0. Append the run-specific entry generated in `<repair folder>/DEVIATIONS_entry.md`. |

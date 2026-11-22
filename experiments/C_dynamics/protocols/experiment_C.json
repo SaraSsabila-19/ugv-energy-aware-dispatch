@@ -1,0 +1,13 @@
+{
+  "protocol_id": "EXP_C_IMPULSE",
+  "pilot": false,
+  "seeds": [801001,802001,803001,804001,805001,806001,807001,808001,809001,810001,811001,812001,813001,814001,815001,816001,817001,818001,819001,820001,821001,822001,823001,824001,825001,826001,827001,828001,829001,830001,831001,832001,833001,834001,835001,836001,837001,838001,839001,840001],
+  "algorithms": ["greedy", "hungarian"],
+  "scenario": "S4, 12 vehicles, 100 requests, full SOC, 825 kg empty, 80 kg per passenger, normalized time 600 s and energy 100 Wh",
+  "schedule": "Independent all-off and all-on references; every ordinal eligible matrix round k of the all-off trajectory receives one pulse; every ordinal eligible matrix round k of the all-on trajectory defines a prefix with first k eligible rounds on and rest off. Include the last prefix independently to verify endpoint. Eligible means at least one finite pair cost, not an invocation ID. All-infeasible matrices have no effective decision; their candidate calls can receive the next scheduled weight but do not advance the ordinal. Verify this rule against cost diagnostics.",
+  "primary_estimands": ["whole_pct", "nonadditivity_pct", "prefix_continuation_pct"],
+  "normalization": "Each saving is signed before minus after, divided by the all-off battery Wh of that seed-policy group, times 100. Local and continuation effects use equal-cardinality target rounds only; all global effects retain every round.",
+  "inference": "Six two-sided paired seed-level sign-flip tests, 1000000 Monte Carlo draws with +1 correction, Holm across six, seed-level t confidence intervals, descriptive +/-1 pp margin classifications based on unadjusted 95% intervals. Sign-flip tests assume symmetry/exchangeability of paired effects. No round-level pseudoreplication. No early stopping; pilot excluded.",
+  "predictions": "Whole-run energy saving positive; continuation contribution positive; isolated pulse sum may not equal all-on saving (two-sided, no prespecified direction). The exact prefix telescoping is an identity, not a tested scientific hypothesis. Distance and service changes descriptive, not causal mediation.",
+  "exclusions": "No seed dropping. A missing target, trace mismatch, simulator or input hash mismatch, incomplete run, nonreproducible endpoint or no-op effect blocks all analysis. Retain unequal-cardinality global effects and report coverage; omit unequal-cardinality local comparisons only. Pilot seed 951001 excluded."
+}

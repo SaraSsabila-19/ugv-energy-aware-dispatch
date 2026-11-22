@@ -1,0 +1,68 @@
+{
+  "network": "Universiti Malaya district (synthetic service geography)",
+  "bbox_wsen": [
+    101.642,
+    3.108,
+    101.67,
+    3.134
+  ],
+  "osm_date_utc": "2025-10-01T00:00:00Z",
+  "overpass_filter": "[\"highway\"~\"^(tertiary|residential|unclassified|living_street|service)$\"][\"area\"!=\"yes\"][\"access\"!=\"no\"][\"motor_vehicle\"!=\"no\"]",
+  "osmnx_version": "2.1.0",
+  "networkx_version": "3.6.1",
+  "source_app_sha256": "7b52bb550414469937da3098f91313b366137d43bd48b8465b840a97bffeb0a0",
+  "source_graph_sha256": "ebd138a83763f11172e079f40457b371be7eebcd2e3aa018aeda13d9d70114f4",
+  "source_hotspots_sha256": "6a55a275f2ac18ab383d2efcd67a31250602503a62fa3c5bf2f3f504ae0b979d",
+  "downloaded_utc": "2026-11-22T02:12:42.476587+00:00",
+  "directed_osm_graph": true,
+  "simulation_assumption": "undirected, flat, 22 km/h cap; no claim of legal accessibility or real demand",
+  "license": "OpenStreetMap contributors, ODbL https://www.openstreetmap.org/copyright",
+  "metrics": {
+    "UTP": {
+      "nodes": 474,
+      "edges": 718,
+      "network_km": 45.90032096188599,
+      "OD_shortest_m": {
+        "min": 20.792561072059847,
+        "p10": 346.69334319800083,
+        "median": 966.3344312589112,
+        "p90": 1583.9555547813077,
+        "max": 2715.2179235846147
+      },
+      "closest_depot_m": {
+        "min": 0,
+        "p10": 140.73120799613736,
+        "median": 452.27603364642073,
+        "p90": 704.0682179291181,
+        "max": 1129.4027409000953
+      }
+    },
+    "UM_district": {
+      "nodes": 5018,
+      "edges": 5295,
+      "network_km": 77.91726008324567,
+      "OD_shortest_m": {
+        "min": 3.255287696138897,
+        "p10": 564.2646471589387,
+        "median": 1718.594527138552,
+        "p90": 3615.9508186083467,
+        "max": 5452.992486278593
+      },
+      "closest_depot_m": {
+        "min": 0,
+        "p10": 236.81820559028813,
+        "median": 880.7989120541492,
+        "p90": 2023.0373421227423,
+        "max": 3980.1496471021796
+      }
+    }
+  },
+  "hashes": {
+    "hotspot_locations.csv": "2fb7ed84cc456b95dcda248cbac0eb0938ffdbb8a8790626b7446d834c6c6369",
+    "hotspot_mapping.csv": "5d0d231db9e88320d37732c4c7db12aafcf993c042673e15ee317ea91f9bf50e",
+    "parking_mapping.csv": "baa994e5d330b0ceb75260b790c1f2896f28ccec984882d1e3833fce4c9f37a6",
+    "parking_registry.json": "f9e86c595693853fb2a2a4ddd8be86b7f32ef5d32afe37f5f8f8781e60c5cd0b",
+    "utp_graph.graphml": "3d83701316ce693075755324cd16f792ca28588210d752b5df5243251746ac42"
+  },
+  "mapping_rule": "normalized source graph coordinate bounds to external graph bounds; sorted one-to-one nearest nodes; source row order and weights unchanged; depot IDs unchanged"
+}

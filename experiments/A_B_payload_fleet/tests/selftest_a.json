@@ -1,0 +1,1342 @@
+{
+  "protocol_id": "SELFTEST_A",
+  "version": "1.0",
+  "status": "kit self-test only (not confirmatory)",
+  "title": "Payload (load-sensitivity) experiment: does a larger passenger-to-vehicle mass ratio make energy-aware dispatch matter?",
+  "frozen_app_sha256": "7b52bb550414469937da3098f91313b366137d43bd48b8465b840a97bffeb0a0",
+  "excluded_seeds": [],
+  "mechanism": "Per km, cruise time is load-independent (163.6 s/km) while energy is a0 + a1*n (n passengers onboard). An insertion's energy increment is therefore approximately a0*dD + a1*dPK + stop terms, and its duration increment dD/v + stop/dwell terms. Only a1*dPK (added passenger-km) is not proportional to duration, so the lever is rho = a1/a0. Uniformly scaling all energy costs would only re-weight alpha_E, which the energy-only probe showed cannot exceed about 2% saving. Payload changes rho, i.e. the non-proportional share.",
+  "design": {
+    "seeds": "905001:907001:1000",
+    "fleet_configs": [
+      {
+        "id": "V12R100",
+        "vehicles": 12,
+        "requests": 100
+      }
+    ],
+    "mass_configs": [
+      {
+        "id": "M825_P80",
+        "overrides": {},
+        "rho_pct": 7.4,
+        "physical": true,
+        "basis": "Frozen baseline: GMTLSV six-seat enclosed cart, 825 kg incl. batteries; 80 kg per passenger."
+      },
+      {
+        "id": "M587_P80",
+        "overrides": {
+          "UGV_EMPTY_MASS_KG": 586.5
+        },
+        "rho_pct": 9.5,
+        "physical": true,
+        "basis": "Six-seat open electric cart class with lead-acid pack: Club Car Onward 6-passenger HP Electric, non-lifted, curb 1,293 lb (586.5 kg)."
+      },
+      {
+        "id": "M456_P80",
+        "overrides": {
+          "UGV_EMPTY_MASS_KG": 455.8
+        },
+        "rho_pct": 11.2,
+        "physical": true,
+        "basis": "Six-seat lithium cart class: Club Car Onward 6-passenger XR Lithium, non-lifted, curb 1,005 lb (455.8 kg)."
+      },
+      {
+        "id": "M456_P100",
+        "overrides": {
+          "UGV_EMPTY_MASS_KG": 455.8,
+          "UGV_PASSENGER_MASS_KG": 100.0
+        },
+        "rho_pct": 14.0,
+        "physical": true,
+        "basis": "Same lithium cart; passengers carrying about 20 kg of luggage each. Full payload 600 kg, within the roughly 454-635 kg (1,000-1,400 lb) load range quoted for six-seat carts."
+      },
+      {
+        "id": "M456_P160_STRESS",
+        "overrides": {
+          "UGV_EMPTY_MASS_KG": 455.8,
+          "UGV_PASSENGER_MASS_KG": 160.0
+        },
+        "rho_pct": 22.4,
+        "physical": false,
+        "basis": "NON-PHYSICAL model stress level (960 kg payload exceeds cart load ratings). Used only to test the functional form of the mechanism; never interpreted as an operating scenario."
+      }
+    ],
+    "algorithms": [
+      "hungarian",
+      "greedy"
+    ],
+    "initial_soc": [
+      1.0
+    ],
+    "alpha_energy": [
+      0,
+      1
+    ],
+    "beta_time": 1.0,
+    "soc_cost_weight": 0.0,
+    "probe": true
+  },
+  "hypotheses": {
+    "H_A1_manipulation": "Within-request energy-duration correlation falls and the share of insertion decisions changed by alpha_E rises as rho increases (A3, A4, trend).",
+    "H_A2_decision": "The decision-level saving of the energy term rises with rho (A1, A5). Predicted size from the 2-seed manipulation check on excluded seeds: about +0.4 pp from M825_P80 to M456_P100, i.e. below the 1 pp margin.",
+    "H_A3_realized": "The realized run-level saving rises with rho (A2, A6). Prediction: any increase is smaller than the 1 pp margin, so energy weighting stays operationally negligible across physically plausible payloads.",
+    "H_A4_stress": "At the non-physical stress level the decision-level saving exceeds the physical levels (A7), confirming the functional form. Exploratory."
+  },
+  "outcomes": {
+    "sdec_pct": "Decision-level saving (% of run withdrawal): 100*(planned dE of the time-only choice - planned dE of the energy-term choice)/battery_Wh, summed over dispatch rounds in the same fleet states (probe).",
+    "battery_Wh": "Gross modeled battery withdrawal per run; contrasts use the percent change between alpha_E=1 and 0 within seed.",
+    "r_within": "Pooled within-request correlation of candidate dE and dT in the run (simulator cost diagnostics).",
+    "insertion_change_pct": "Share of assigned requests whose insertion order would differ under the other alpha_E in the same state (probe).",
+    "secondary_descriptive": [
+      "matching_change_pct",
+      "completed_per100",
+      "km",
+      "wait_s",
+      "wh_per_completion",
+      "blocked_pairs"
+    ]
+  },
+  "analysis": {
+    "unit": "workload seed (paired across all conditions)",
+    "ci": "paired 95% Student t",
+    "test": "two-sided sign-flip: exact for lattice-valued differences, otherwise Monte Carlo with 1,000,000 draws (seed 20261120)",
+    "multiplicity": "Holm within each family; A_primary has 4 tests and is confirmatory; other families are secondary or exploratory as named",
+    "margin_rule": "A 95% CI inside +/- margin is reported as 'no effect larger than the margin'; Holm p < 0.05 with CI outside the margin as 'effect exceeding the margin'; Holm p < 0.05 with CI inside as 'detectable but below the margin'; anything else as 'inconclusive'.",
+    "effect_sizes": "mean paired contrast, 95% CI, SD, d_z"
+  },
+  "sample_size": "n = 100 seeds (2,000 runs). Realized percent-change SDs from the 320-run campaign: 3.2% (Hungarian) and 4.1% (Greedy) at 100% SOC. Assuming independent levels, contrast SDs are 4.6% and 5.8%, giving 95% CI half-widths of about 0.9 and 1.2 pp at n = 100, and 80% power at Holm alpha 0.0125 for realized changes of about 1.5 and 1.9 pp. The decision-level saving has a per-run SD of about 0.06 pp at 100% SOC (manipulation check), so A1 is estimated to better than +/-0.05 pp. Realized increases smaller than about 1.5-1.9 pp will be reported as estimates, not as detected effects.",
+  "contrasts": [
+    {
+      "id": "A1_decision_saving_hungarian",
+      "family": "A_primary",
+      "outcome": "sdec_pct",
+      "unit": "pp of run energy",
+      "margin": 1.0,
+      "prediction": "positive (larger saving at higher rho), below the 1 pp margin",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P100",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": "Decision-level saving of the energy-term choice versus the time-only choice in the same fleet state, alpha_E=1 trajectories; highest physical rho minus baseline."
+    },
+    {
+      "id": "A2_realized_saving_hungarian",
+      "family": "A_primary",
+      "outcome": "battery_Wh",
+      "unit": "pp of run energy",
+      "margin": 1.0,
+      "prediction": "negative (larger realized saving at higher rho), magnitude below 1 pp",
+      "terms": [
+        {
+          "w": 1,
+          "type": "pctdiff",
+          "outcome": "battery_Wh",
+          "a": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P100",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          },
+          "b": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P100",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        },
+        {
+          "w": -1,
+          "type": "pctdiff",
+          "outcome": "battery_Wh",
+          "a": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          },
+          "b": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        }
+      ],
+      "note": "Realized run-level effect of alpha_E (percent change in battery withdrawal) at the highest physical rho minus at baseline. Negative = more saving."
+    },
+    {
+      "id": "A3_r_hungarian",
+      "family": "A_manipulation",
+      "outcome": "r_within",
+      "unit": "correlation",
+      "margin": null,
+      "prediction": "negative (energy and duration less collinear)",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P100",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "A4_insertion_change_hungarian",
+      "family": "A_manipulation",
+      "outcome": "insertion_change_pct",
+      "unit": "pp of assigned requests",
+      "margin": null,
+      "prediction": "positive",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P100",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "A5_decision_saving_slope_hungarian",
+      "family": "A_trend",
+      "outcome": "sdec_pct",
+      "unit": "pp per pp of rho",
+      "margin": null,
+      "prediction": "positive",
+      "terms": [
+        {
+          "w": -0.13384730699218333,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": -0.04390191669343615,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M587_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": 0.028911018310311554,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": 0.14883820537530784,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P100",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "A6_realized_saving_slope_hungarian",
+      "family": "A_trend",
+      "outcome": "battery_Wh",
+      "unit": "pp per pp of rho",
+      "margin": null,
+      "prediction": "negative",
+      "terms": [
+        {
+          "w": -0.13384730699218333,
+          "type": "pctdiff",
+          "outcome": "battery_Wh",
+          "a": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          },
+          "b": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        },
+        {
+          "w": -0.04390191669343615,
+          "type": "pctdiff",
+          "outcome": "battery_Wh",
+          "a": {
+            "fleet_config": "V12R100",
+            "mass_config": "M587_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          },
+          "b": {
+            "fleet_config": "V12R100",
+            "mass_config": "M587_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        },
+        {
+          "w": 0.028911018310311554,
+          "type": "pctdiff",
+          "outcome": "battery_Wh",
+          "a": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          },
+          "b": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        },
+        {
+          "w": 0.14883820537530784,
+          "type": "pctdiff",
+          "outcome": "battery_Wh",
+          "a": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P100",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          },
+          "b": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P100",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "A7_stress_decision_saving_hungarian",
+      "family": "A_stress_exploratory",
+      "outcome": "sdec_pct",
+      "unit": "pp of run energy",
+      "margin": 1.0,
+      "prediction": "positive",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P160_STRESS",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "A8_stress_realized_saving_hungarian",
+      "family": "A_stress_exploratory",
+      "outcome": "battery_Wh",
+      "unit": "pp of run energy",
+      "margin": 1.0,
+      "prediction": "negative",
+      "terms": [
+        {
+          "w": 1,
+          "type": "pctdiff",
+          "outcome": "battery_Wh",
+          "a": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P160_STRESS",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          },
+          "b": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P160_STRESS",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        },
+        {
+          "w": -1,
+          "type": "pctdiff",
+          "outcome": "battery_Wh",
+          "a": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          },
+          "b": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "A9_realized_saving_M825_P80_hungarian",
+      "family": "A_descriptive",
+      "outcome": "battery_Wh",
+      "unit": "pp of run energy",
+      "margin": null,
+      "prediction": "negative",
+      "terms": [
+        {
+          "w": 1,
+          "type": "pctdiff",
+          "outcome": "battery_Wh",
+          "a": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          },
+          "b": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "A9_decision_saving_M825_P80_hungarian",
+      "family": "A_descriptive",
+      "outcome": "sdec_pct",
+      "unit": "pp of run energy",
+      "margin": null,
+      "prediction": "positive",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "A9_realized_saving_M587_P80_hungarian",
+      "family": "A_descriptive",
+      "outcome": "battery_Wh",
+      "unit": "pp of run energy",
+      "margin": null,
+      "prediction": "negative",
+      "terms": [
+        {
+          "w": 1,
+          "type": "pctdiff",
+          "outcome": "battery_Wh",
+          "a": {
+            "fleet_config": "V12R100",
+            "mass_config": "M587_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          },
+          "b": {
+            "fleet_config": "V12R100",
+            "mass_config": "M587_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "A9_decision_saving_M587_P80_hungarian",
+      "family": "A_descriptive",
+      "outcome": "sdec_pct",
+      "unit": "pp of run energy",
+      "margin": null,
+      "prediction": "positive",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M587_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "A9_realized_saving_M456_P80_hungarian",
+      "family": "A_descriptive",
+      "outcome": "battery_Wh",
+      "unit": "pp of run energy",
+      "margin": null,
+      "prediction": "negative",
+      "terms": [
+        {
+          "w": 1,
+          "type": "pctdiff",
+          "outcome": "battery_Wh",
+          "a": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          },
+          "b": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "A9_decision_saving_M456_P80_hungarian",
+      "family": "A_descriptive",
+      "outcome": "sdec_pct",
+      "unit": "pp of run energy",
+      "margin": null,
+      "prediction": "positive",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "A9_realized_saving_M456_P100_hungarian",
+      "family": "A_descriptive",
+      "outcome": "battery_Wh",
+      "unit": "pp of run energy",
+      "margin": null,
+      "prediction": "negative",
+      "terms": [
+        {
+          "w": 1,
+          "type": "pctdiff",
+          "outcome": "battery_Wh",
+          "a": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P100",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          },
+          "b": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P100",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "A9_decision_saving_M456_P100_hungarian",
+      "family": "A_descriptive",
+      "outcome": "sdec_pct",
+      "unit": "pp of run energy",
+      "margin": null,
+      "prediction": "positive",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P100",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "A9_realized_saving_M456_P160_STRESS_hungarian",
+      "family": "A_descriptive",
+      "outcome": "battery_Wh",
+      "unit": "pp of run energy",
+      "margin": null,
+      "prediction": "negative",
+      "terms": [
+        {
+          "w": 1,
+          "type": "pctdiff",
+          "outcome": "battery_Wh",
+          "a": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P160_STRESS",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          },
+          "b": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P160_STRESS",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "A9_decision_saving_M456_P160_STRESS_hungarian",
+      "family": "A_descriptive",
+      "outcome": "sdec_pct",
+      "unit": "pp of run energy",
+      "margin": null,
+      "prediction": "positive",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P160_STRESS",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "A1_decision_saving_greedy",
+      "family": "A_primary",
+      "outcome": "sdec_pct",
+      "unit": "pp of run energy",
+      "margin": 1.0,
+      "prediction": "positive (larger saving at higher rho), below the 1 pp margin",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P100",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": "Decision-level saving of the energy-term choice versus the time-only choice in the same fleet state, alpha_E=1 trajectories; highest physical rho minus baseline."
+    },
+    {
+      "id": "A2_realized_saving_greedy",
+      "family": "A_primary",
+      "outcome": "battery_Wh",
+      "unit": "pp of run energy",
+      "margin": 1.0,
+      "prediction": "negative (larger realized saving at higher rho), magnitude below 1 pp",
+      "terms": [
+        {
+          "w": 1,
+          "type": "pctdiff",
+          "outcome": "battery_Wh",
+          "a": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P100",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          },
+          "b": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P100",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        },
+        {
+          "w": -1,
+          "type": "pctdiff",
+          "outcome": "battery_Wh",
+          "a": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          },
+          "b": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        }
+      ],
+      "note": "Realized run-level effect of alpha_E (percent change in battery withdrawal) at the highest physical rho minus at baseline. Negative = more saving."
+    },
+    {
+      "id": "A3_r_greedy",
+      "family": "A_manipulation",
+      "outcome": "r_within",
+      "unit": "correlation",
+      "margin": null,
+      "prediction": "negative (energy and duration less collinear)",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P100",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "A4_insertion_change_greedy",
+      "family": "A_manipulation",
+      "outcome": "insertion_change_pct",
+      "unit": "pp of assigned requests",
+      "margin": null,
+      "prediction": "positive",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P100",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "A5_decision_saving_slope_greedy",
+      "family": "A_trend",
+      "outcome": "sdec_pct",
+      "unit": "pp per pp of rho",
+      "margin": null,
+      "prediction": "positive",
+      "terms": [
+        {
+          "w": -0.13384730699218333,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": -0.04390191669343615,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M587_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": 0.028911018310311554,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": 0.14883820537530784,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P100",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "A6_realized_saving_slope_greedy",
+      "family": "A_trend",
+      "outcome": "battery_Wh",
+      "unit": "pp per pp of rho",
+      "margin": null,
+      "prediction": "negative",
+      "terms": [
+        {
+          "w": -0.13384730699218333,
+          "type": "pctdiff",
+          "outcome": "battery_Wh",
+          "a": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          },
+          "b": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        },
+        {
+          "w": -0.04390191669343615,
+          "type": "pctdiff",
+          "outcome": "battery_Wh",
+          "a": {
+            "fleet_config": "V12R100",
+            "mass_config": "M587_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          },
+          "b": {
+            "fleet_config": "V12R100",
+            "mass_config": "M587_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        },
+        {
+          "w": 0.028911018310311554,
+          "type": "pctdiff",
+          "outcome": "battery_Wh",
+          "a": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          },
+          "b": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        },
+        {
+          "w": 0.14883820537530784,
+          "type": "pctdiff",
+          "outcome": "battery_Wh",
+          "a": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P100",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          },
+          "b": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P100",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "A7_stress_decision_saving_greedy",
+      "family": "A_stress_exploratory",
+      "outcome": "sdec_pct",
+      "unit": "pp of run energy",
+      "margin": 1.0,
+      "prediction": "positive",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P160_STRESS",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "A8_stress_realized_saving_greedy",
+      "family": "A_stress_exploratory",
+      "outcome": "battery_Wh",
+      "unit": "pp of run energy",
+      "margin": 1.0,
+      "prediction": "negative",
+      "terms": [
+        {
+          "w": 1,
+          "type": "pctdiff",
+          "outcome": "battery_Wh",
+          "a": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P160_STRESS",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          },
+          "b": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P160_STRESS",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        },
+        {
+          "w": -1,
+          "type": "pctdiff",
+          "outcome": "battery_Wh",
+          "a": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          },
+          "b": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "A9_realized_saving_M825_P80_greedy",
+      "family": "A_descriptive",
+      "outcome": "battery_Wh",
+      "unit": "pp of run energy",
+      "margin": null,
+      "prediction": "negative",
+      "terms": [
+        {
+          "w": 1,
+          "type": "pctdiff",
+          "outcome": "battery_Wh",
+          "a": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          },
+          "b": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "A9_decision_saving_M825_P80_greedy",
+      "family": "A_descriptive",
+      "outcome": "sdec_pct",
+      "unit": "pp of run energy",
+      "margin": null,
+      "prediction": "positive",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "A9_realized_saving_M587_P80_greedy",
+      "family": "A_descriptive",
+      "outcome": "battery_Wh",
+      "unit": "pp of run energy",
+      "margin": null,
+      "prediction": "negative",
+      "terms": [
+        {
+          "w": 1,
+          "type": "pctdiff",
+          "outcome": "battery_Wh",
+          "a": {
+            "fleet_config": "V12R100",
+            "mass_config": "M587_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          },
+          "b": {
+            "fleet_config": "V12R100",
+            "mass_config": "M587_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "A9_decision_saving_M587_P80_greedy",
+      "family": "A_descriptive",
+      "outcome": "sdec_pct",
+      "unit": "pp of run energy",
+      "margin": null,
+      "prediction": "positive",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M587_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "A9_realized_saving_M456_P80_greedy",
+      "family": "A_descriptive",
+      "outcome": "battery_Wh",
+      "unit": "pp of run energy",
+      "margin": null,
+      "prediction": "negative",
+      "terms": [
+        {
+          "w": 1,
+          "type": "pctdiff",
+          "outcome": "battery_Wh",
+          "a": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          },
+          "b": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "A9_decision_saving_M456_P80_greedy",
+      "family": "A_descriptive",
+      "outcome": "sdec_pct",
+      "unit": "pp of run energy",
+      "margin": null,
+      "prediction": "positive",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "A9_realized_saving_M456_P100_greedy",
+      "family": "A_descriptive",
+      "outcome": "battery_Wh",
+      "unit": "pp of run energy",
+      "margin": null,
+      "prediction": "negative",
+      "terms": [
+        {
+          "w": 1,
+          "type": "pctdiff",
+          "outcome": "battery_Wh",
+          "a": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P100",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          },
+          "b": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P100",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "A9_decision_saving_M456_P100_greedy",
+      "family": "A_descriptive",
+      "outcome": "sdec_pct",
+      "unit": "pp of run energy",
+      "margin": null,
+      "prediction": "positive",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P100",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "A9_realized_saving_M456_P160_STRESS_greedy",
+      "family": "A_descriptive",
+      "outcome": "battery_Wh",
+      "unit": "pp of run energy",
+      "margin": null,
+      "prediction": "negative",
+      "terms": [
+        {
+          "w": 1,
+          "type": "pctdiff",
+          "outcome": "battery_Wh",
+          "a": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P160_STRESS",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          },
+          "b": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P160_STRESS",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "A9_decision_saving_M456_P160_STRESS_greedy",
+      "family": "A_descriptive",
+      "outcome": "sdec_pct",
+      "unit": "pp of run energy",
+      "margin": null,
+      "prediction": "positive",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M456_P160_STRESS",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    }
+  ],
+  "deviations_policy": "Any change after the first confirmatory run is logged in DEVIATIONS.md with date and reason; results are reported under the original protocol as well."
+}

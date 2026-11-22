@@ -1,0 +1,11 @@
+{
+  "protocol_id": "PILOT_D_EQUIVALENCE",
+  "pilot": true,
+  "seeds": "990001:990001:1000",
+  "algorithms": ["greedy", "hungarian"],
+  "mass_configs": {"M825_P80": [825, 80], "M456_P100": [455.8, 100]},
+  "arms": {"e0": 0, "e025": 0.25, "e05": 0.5, "e1": 1, "e2": 2, "e4": 4, "pk1": 1},
+  "fleet": 12, "requests": 100, "soc": 1.0,
+  "controls": ["e0", "e1"],
+  "purpose": "Validate all arms, candidate and assignment accounting, and exact native control physical/service reproduction. Excluded from confirmation. No statistical inference."
+}

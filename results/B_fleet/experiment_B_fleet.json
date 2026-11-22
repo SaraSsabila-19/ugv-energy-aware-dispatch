@@ -1,0 +1,1237 @@
+{
+  "protocol_id": "EXP_B_FLEET",
+  "version": "1.0",
+  "status": "PRESPECIFIED: fixed before any confirmatory run",
+  "title": "Larger-fleet validation: do the 12-UGV findings hold with 24 UGVs, separating fleet size from demand intensity?",
+  "frozen_app_sha256": "7b52bb550414469937da3098f91313b366137d43bd48b8465b840a97bffeb0a0",
+  "excluded_seeds": [
+    1001,
+    2001,
+    3001,
+    4001,
+    5001,
+    6001,
+    7001,
+    8001,
+    9001,
+    10001,
+    11001,
+    12001,
+    13001,
+    14001,
+    15001,
+    16001,
+    17001,
+    18001,
+    19001,
+    20001,
+    21001,
+    22001,
+    23001,
+    24001,
+    25001,
+    26001,
+    27001,
+    28001,
+    29001,
+    30001,
+    31001,
+    32001,
+    33001,
+    34001,
+    35001,
+    36001,
+    37001,
+    38001,
+    39001,
+    40001,
+    41001,
+    42001,
+    43001,
+    44001,
+    45001,
+    46001,
+    47001,
+    48001,
+    49001,
+    50001,
+    51001,
+    52001,
+    53001,
+    54001,
+    55001,
+    56001,
+    57001,
+    58001,
+    59001,
+    60001,
+    81001,
+    82001,
+    83001,
+    84001,
+    85001,
+    86001,
+    87001,
+    88001,
+    91001,
+    92001,
+    93001,
+    94001,
+    99001,
+    901001,
+    902001,
+    903001,
+    904001,
+    905001,
+    906001,
+    907001,
+    908001,
+    909001,
+    910001,
+    911001
+  ],
+  "demand_rationale": "Keeping 100 requests isolates fleet size at fixed demand but halves requests per vehicle (8.33 to 4.17) and doubles above-reserve energy. Doubling to 200 requests keeps requests per vehicle at 8.33 and isolates scale. Both are needed; with the same seed, V12R100 and V24R100 receive identical request sets (workload depends only on seed and request count), so the fleet-size contrast is exactly matched.",
+  "charging_note": "Charging rules unchanged: each idle vehicle at its home depot charges independently (1,500 W DC), no charger queue or site power cap. With 24 vehicles on three depots this is more optimistic than with 12; stated as a limitation.",
+  "design": {
+    "seeds": "701001:740001:1000",
+    "fleet_configs": [
+      {
+        "id": "V12R100",
+        "vehicles": 12,
+        "requests": 100,
+        "note": "baseline S4; replicates the 2x2 on fresh seeds"
+      },
+      {
+        "id": "V24R100",
+        "vehicles": 24,
+        "requests": 100,
+        "note": "S3: fleet doubled, identical requests per seed (fleet-size effect at fixed demand)"
+      },
+      {
+        "id": "V24R200",
+        "vehicles": 24,
+        "requests": 200,
+        "note": "fleet and demand doubled: same 8.33 requests per vehicle as V12R100 (scale effect at fixed intensity)"
+      }
+    ],
+    "mass_configs": [
+      {
+        "id": "M825_P80",
+        "overrides": {}
+      }
+    ],
+    "algorithms": [
+      "hungarian",
+      "greedy"
+    ],
+    "initial_soc": [
+      1.0,
+      0.25
+    ],
+    "alpha_energy": [
+      0,
+      1
+    ],
+    "beta_time": 1.0,
+    "soc_cost_weight": 0.0,
+    "probe": true
+  },
+  "hypotheses": {
+    "H_B1": "No alpha_E x initial-SOC interaction on completions at 24 UGVs, for 100 or 200 requests (B1; CI within +/-1 per 100).",
+    "H_B2": "The 25% SOC service loss shrinks when the fleet doubles at fixed demand (B3 positive), because above-reserve energy doubles.",
+    "H_B3": "At fixed intensity (V24R200 vs V12R100) the service loss is compared two-sided (B4); no directional prediction.",
+    "H_B4": "The energy term's realized and decision-level savings stay below 1 pp in every configuration (B5, B6); decision-level saving is smaller with 24 UGVs at fixed demand (B8).",
+    "H_B5": "The 12-UGV 2x2 null replicates on fresh seeds (B2)."
+  },
+  "outcomes": {
+    "completed_per100": "completed requests per 100 generated requests",
+    "battery_Wh": "gross modeled withdrawal (percent change within seed)",
+    "sdec_pct": "decision-level saving, as in Experiment A",
+    "secondary_descriptive": [
+      "blocked_pairs",
+      "failures_all_blocked",
+      "km",
+      "wait_s",
+      "wh_per_completion",
+      "r_within",
+      "insertion_change_pct",
+      "charged_Wh"
+    ]
+  },
+  "analysis": {
+    "unit": "workload seed (paired across all conditions)",
+    "ci": "paired 95% Student t",
+    "test": "two-sided sign-flip: exact for lattice-valued differences, otherwise Monte Carlo with 1,000,000 draws (seed 20261120)",
+    "multiplicity": "Holm within each family; B_primary (4 tests) is confirmatory; B_service_scale (4 tests) is a prespecified secondary family; others secondary/descriptive",
+    "margin_rule": "A 95% CI inside +/- margin is reported as 'no effect larger than the margin'; Holm p < 0.05 with CI outside the margin as 'effect exceeding the margin'; Holm p < 0.05 with CI inside as 'detectable but below the margin'; anything else as 'inconclusive'.",
+    "effect_sizes": "mean paired contrast, 95% CI, SD, d_z"
+  },
+  "sample_size": "n = 40 seeds (960 runs). From the 320-run campaign: SD of the per-seed alpha x SOC interaction on completions 2.0-2.9 per 100, and SD of the 25% SOC service loss 2.3-2.5 per 100. At n = 40 the 95% CI half-width is about 0.65-0.92 per 100 for the interaction and about 0.8 for the service-loss contrasts, enough to place intervals inside the +/-1 margin when the true value is near 0, and to detect a service-loss change of 2 per 100 with power > 0.9 at Holm alpha 0.0125.",
+  "contrasts": [
+    {
+      "id": "B1_interaction_completions_V24R100_hungarian",
+      "family": "B_primary",
+      "outcome": "completed_per100",
+      "unit": "completions per 100 requests",
+      "margin": 1.0,
+      "prediction": "within margin (no alpha_E x SOC interaction), replicating the 12-UGV result",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V24R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 0.25,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V24R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 0.25,
+            "alpha_energy": 0
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V24R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V24R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "B1_interaction_completions_V24R200_hungarian",
+      "family": "B_primary",
+      "outcome": "completed_per100",
+      "unit": "completions per 100 requests",
+      "margin": 1.0,
+      "prediction": "within margin (no alpha_E x SOC interaction), replicating the 12-UGV result",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V24R200",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 0.25,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V24R200",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 0.25,
+            "alpha_energy": 0
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V24R200",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V24R200",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "B2_interaction_completions_V12R100_hungarian",
+      "family": "B_replication",
+      "outcome": "completed_per100",
+      "unit": "completions per 100 requests",
+      "margin": 1.0,
+      "prediction": "within margin (replication on fresh seeds)",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 0.25,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 0.25,
+            "alpha_energy": 0
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "B3_socloss_fleetsize_hungarian",
+      "family": "B_service_scale",
+      "outcome": "completed_per100",
+      "unit": "completions per 100 requests",
+      "margin": 1.0,
+      "prediction": "positive: doubling the fleet at fixed demand doubles the above-reserve energy, so the 25% SOC service loss shrinks",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V24R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 0.25,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V24R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 0.25,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "B4_socloss_scale_hungarian",
+      "family": "B_service_scale",
+      "outcome": "completed_per100",
+      "unit": "completions per 100 requests",
+      "margin": 1.0,
+      "prediction": "two-sided, no directional prediction: same requests per vehicle, but a larger pooled fleet may rotate charging more easily",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V24R200",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 0.25,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V24R200",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 0.25,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "B5_realized_saving_V12R100_hungarian",
+      "family": "B_energy",
+      "outcome": "battery_Wh",
+      "unit": "pp of run energy",
+      "margin": 1.0,
+      "prediction": "negative, magnitude below 1 pp",
+      "terms": [
+        {
+          "w": 1,
+          "type": "pctdiff",
+          "outcome": "battery_Wh",
+          "a": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          },
+          "b": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "B6_decision_saving_V12R100_hungarian",
+      "family": "B_mechanism",
+      "outcome": "sdec_pct",
+      "unit": "pp of run energy",
+      "margin": null,
+      "prediction": "positive",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "B7_socloss_V12R100_hungarian",
+      "family": "B_descriptive",
+      "outcome": "completed_per100",
+      "unit": "completions per 100 requests",
+      "margin": null,
+      "prediction": "negative at V12R100",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 0.25,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "B5_realized_saving_V24R100_hungarian",
+      "family": "B_energy",
+      "outcome": "battery_Wh",
+      "unit": "pp of run energy",
+      "margin": 1.0,
+      "prediction": "negative, magnitude below 1 pp",
+      "terms": [
+        {
+          "w": 1,
+          "type": "pctdiff",
+          "outcome": "battery_Wh",
+          "a": {
+            "fleet_config": "V24R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          },
+          "b": {
+            "fleet_config": "V24R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "B6_decision_saving_V24R100_hungarian",
+      "family": "B_mechanism",
+      "outcome": "sdec_pct",
+      "unit": "pp of run energy",
+      "margin": null,
+      "prediction": "positive",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V24R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "B7_socloss_V24R100_hungarian",
+      "family": "B_descriptive",
+      "outcome": "completed_per100",
+      "unit": "completions per 100 requests",
+      "margin": null,
+      "prediction": "negative at V12R100",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V24R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 0.25,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V24R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "B5_realized_saving_V24R200_hungarian",
+      "family": "B_energy",
+      "outcome": "battery_Wh",
+      "unit": "pp of run energy",
+      "margin": 1.0,
+      "prediction": "negative, magnitude below 1 pp",
+      "terms": [
+        {
+          "w": 1,
+          "type": "pctdiff",
+          "outcome": "battery_Wh",
+          "a": {
+            "fleet_config": "V24R200",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          },
+          "b": {
+            "fleet_config": "V24R200",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "B6_decision_saving_V24R200_hungarian",
+      "family": "B_mechanism",
+      "outcome": "sdec_pct",
+      "unit": "pp of run energy",
+      "margin": null,
+      "prediction": "positive",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V24R200",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "B7_socloss_V24R200_hungarian",
+      "family": "B_descriptive",
+      "outcome": "completed_per100",
+      "unit": "completions per 100 requests",
+      "margin": null,
+      "prediction": "negative at V12R100",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V24R200",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 0.25,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V24R200",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "B8_decision_saving_fleetsize_hungarian",
+      "family": "B_mechanism",
+      "outcome": "sdec_pct",
+      "unit": "pp of run energy",
+      "margin": null,
+      "prediction": "negative: with more idle vehicles fewer insertions are pooled, so the energy term has less to act on",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V24R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "hungarian",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "B1_interaction_completions_V24R100_greedy",
+      "family": "B_primary",
+      "outcome": "completed_per100",
+      "unit": "completions per 100 requests",
+      "margin": 1.0,
+      "prediction": "within margin (no alpha_E x SOC interaction), replicating the 12-UGV result",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V24R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 0.25,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V24R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 0.25,
+            "alpha_energy": 0
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V24R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V24R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "B1_interaction_completions_V24R200_greedy",
+      "family": "B_primary",
+      "outcome": "completed_per100",
+      "unit": "completions per 100 requests",
+      "margin": 1.0,
+      "prediction": "within margin (no alpha_E x SOC interaction), replicating the 12-UGV result",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V24R200",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 0.25,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V24R200",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 0.25,
+            "alpha_energy": 0
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V24R200",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V24R200",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "B2_interaction_completions_V12R100_greedy",
+      "family": "B_replication",
+      "outcome": "completed_per100",
+      "unit": "completions per 100 requests",
+      "margin": 1.0,
+      "prediction": "within margin (replication on fresh seeds)",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 0.25,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 0.25,
+            "alpha_energy": 0
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "B3_socloss_fleetsize_greedy",
+      "family": "B_service_scale",
+      "outcome": "completed_per100",
+      "unit": "completions per 100 requests",
+      "margin": 1.0,
+      "prediction": "positive: doubling the fleet at fixed demand doubles the above-reserve energy, so the 25% SOC service loss shrinks",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V24R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 0.25,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V24R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 0.25,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "B4_socloss_scale_greedy",
+      "family": "B_service_scale",
+      "outcome": "completed_per100",
+      "unit": "completions per 100 requests",
+      "margin": 1.0,
+      "prediction": "two-sided, no directional prediction: same requests per vehicle, but a larger pooled fleet may rotate charging more easily",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V24R200",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 0.25,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V24R200",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 0.25,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "B5_realized_saving_V12R100_greedy",
+      "family": "B_energy",
+      "outcome": "battery_Wh",
+      "unit": "pp of run energy",
+      "margin": 1.0,
+      "prediction": "negative, magnitude below 1 pp",
+      "terms": [
+        {
+          "w": 1,
+          "type": "pctdiff",
+          "outcome": "battery_Wh",
+          "a": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          },
+          "b": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "B6_decision_saving_V12R100_greedy",
+      "family": "B_mechanism",
+      "outcome": "sdec_pct",
+      "unit": "pp of run energy",
+      "margin": null,
+      "prediction": "positive",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "B7_socloss_V12R100_greedy",
+      "family": "B_descriptive",
+      "outcome": "completed_per100",
+      "unit": "completions per 100 requests",
+      "margin": null,
+      "prediction": "negative at V12R100",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 0.25,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "B5_realized_saving_V24R100_greedy",
+      "family": "B_energy",
+      "outcome": "battery_Wh",
+      "unit": "pp of run energy",
+      "margin": 1.0,
+      "prediction": "negative, magnitude below 1 pp",
+      "terms": [
+        {
+          "w": 1,
+          "type": "pctdiff",
+          "outcome": "battery_Wh",
+          "a": {
+            "fleet_config": "V24R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          },
+          "b": {
+            "fleet_config": "V24R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "B6_decision_saving_V24R100_greedy",
+      "family": "B_mechanism",
+      "outcome": "sdec_pct",
+      "unit": "pp of run energy",
+      "margin": null,
+      "prediction": "positive",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V24R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "B7_socloss_V24R100_greedy",
+      "family": "B_descriptive",
+      "outcome": "completed_per100",
+      "unit": "completions per 100 requests",
+      "margin": null,
+      "prediction": "negative at V12R100",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V24R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 0.25,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V24R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "B5_realized_saving_V24R200_greedy",
+      "family": "B_energy",
+      "outcome": "battery_Wh",
+      "unit": "pp of run energy",
+      "margin": 1.0,
+      "prediction": "negative, magnitude below 1 pp",
+      "terms": [
+        {
+          "w": 1,
+          "type": "pctdiff",
+          "outcome": "battery_Wh",
+          "a": {
+            "fleet_config": "V24R200",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          },
+          "b": {
+            "fleet_config": "V24R200",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 0
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "B6_decision_saving_V24R200_greedy",
+      "family": "B_mechanism",
+      "outcome": "sdec_pct",
+      "unit": "pp of run energy",
+      "margin": null,
+      "prediction": "positive",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V24R200",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "B7_socloss_V24R200_greedy",
+      "family": "B_descriptive",
+      "outcome": "completed_per100",
+      "unit": "completions per 100 requests",
+      "margin": null,
+      "prediction": "negative at V12R100",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V24R200",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 0.25,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V24R200",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "B8_decision_saving_fleetsize_greedy",
+      "family": "B_mechanism",
+      "outcome": "sdec_pct",
+      "unit": "pp of run energy",
+      "margin": null,
+      "prediction": "negative: with more idle vehicles fewer insertions are pooled, so the energy term has less to act on",
+      "terms": [
+        {
+          "w": 1,
+          "cell": {
+            "fleet_config": "V24R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        },
+        {
+          "w": -1,
+          "cell": {
+            "fleet_config": "V12R100",
+            "mass_config": "M825_P80",
+            "algorithm": "greedy",
+            "initial_soc": 1.0,
+            "alpha_energy": 1
+          }
+        }
+      ],
+      "note": ""
+    }
+  ],
+  "deviations_policy": "Any change after the first confirmatory run is logged in DEVIATIONS.md with date and reason; results are reported under the original protocol as well."
+}

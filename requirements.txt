@@ -1,0 +1,5 @@
+# Verification and analysis (python verification/verify_repository.py, python analysis/synthesis.py)
+numpy>=1.26
+scipy>=1.11
+matplotlib>=3.8
+# Simulation reruns need the full campaign environment: pip install -r requirements-lock.txt (CPython 3.14.4)

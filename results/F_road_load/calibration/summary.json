@@ -1,0 +1,47 @@
+{
+  "source_sha256": "599d0f37d991b4d86f54c6e55137edbcebe691cdb0a893ce675442dd08adc8f9",
+  "files": 35,
+  "rows": 14658,
+  "duplicate_groups": [
+    [
+      "25UMW2.csv",
+      "35UCW1.csv"
+    ]
+  ],
+  "train_files": [
+    "15LCW1",
+    "15LMW1",
+    "15UCW1",
+    "15UMW1"
+  ],
+  "holdout_files": [
+    "15LCW2",
+    "15LMW2",
+    "15UCW2",
+    "15UMW2"
+  ],
+  "train_intervals": 254,
+  "holdout_intervals": 179,
+  "fit_center": 0.012873342200584836,
+  "configs": {
+    "LOW": 0.008,
+    "BASE": 0.012,
+    "HIGH": 0.02
+  },
+  "holdout_baseline_MAPE_pct": 22.589859275490277,
+  "holdout_center_MAPE_pct": 19.6545905444644,
+  "holdout_inside_training_range": 2,
+  "train_coefficients": [
+    0.009185527877687097,
+    0.00812239938364473,
+    0.019451826762058845,
+    0.014733614778948674
+  ],
+  "holdout_coefficients": [
+    0.017164279403748046,
+    0.014891617460543287,
+    0.020021981969172428,
+    0.020713391929594538
+  ],
+  "boundary": "DC-link gross positive draw; not battery terminal net; no independent GMTLSV calibration"
+}

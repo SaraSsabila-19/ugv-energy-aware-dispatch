@@ -1,0 +1,5 @@
+# Verification record
+
+Local Python 3.12 synthetic tests (seven tests) pass: schedule, both intervention types, all-on prefix endpoint, telescoping, tamper refusal, unmatched feasible call refusal, all-infeasible round handling, and a synthetic analysis/figure pipeline (20 dummy runs, not scientific results). Shell syntax and Python compilation pass. The uploaded Experiment A exports supply the pinned source and input hashes and real CSV header schemas; comparison of 400 full-SOC baseline records identified five with all-infeasible rounds, which the adapter explicitly handles.
+
+Not tested locally: invocation of the real frozen simulator, actual Python 3.14 VM, actual long-running campaign or timing estimates. The original simulator and graph files were not present in the uploads. The pilot on the user's machine is mandatory, verifies the adapter against independent uninstrumented controls and the exact whole ladder, and is excluded from inference. Do not treat this local test record as an empirical Experiment C outcome.

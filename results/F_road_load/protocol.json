@@ -1,0 +1,39 @@
+{
+  "algorithms": [
+    "greedy",
+    "hungarian"
+  ],
+  "alpha_energy": [
+    0,
+    1
+  ],
+  "configs": {
+    "BASE": 0.012,
+    "HIGH": 0.02,
+    "LOW": 0.008
+  },
+  "confirmatory_runs": 960,
+  "inference": {
+    "confidence_level": 0.95,
+    "holm_families": {
+      "interaction": 14,
+      "simple": 12
+    },
+    "randomization_draws": 100000,
+    "randomization_seed": 71001
+  },
+  "initial_soc": [
+    1.0,
+    0.25
+  ],
+  "limitations": "External cargo vehicle diagnostic informs an effective rolling-resistance sensitivity range, not physical estimates for the target GMTLSV nor a confidence interval. Selected near-flat slow winter measurements are DC-link gross positive draw, not pack-wide battery discharge. The holdout check does not establish accurate transportability; two of four holdout effective coefficients are just outside the training-derived range. All other cart physics, SOC reserve and charging are unchanged. No tuning on confirmatory simulation outcomes.",
+  "measurement_sha256": "599d0f37d991b4d86f54c6e55137edbcebe691cdb0a893ce675442dd08adc8f9",
+  "pilot_runs": 24,
+  "pilot_seeds": [
+    1190001
+  ],
+  "primary_estimand": "Mean of per-seed battery saving 100*(off-on)/off within 12 cells; low/high minus base at each SOC/policy and 25% minus 100% at each parameter/policy (percentage points).",
+  "protocol_id": "EXP_F_ROAD_LOAD",
+  "seeds": "1201001:1240001:1000",
+  "service_guard": "Descriptive unadjusted 95% CI lower bound of on-minus-off completions strictly greater than -1 per 100, plus positive battery saving with Holm p<0.05; not formal joint noninferiority."
+}

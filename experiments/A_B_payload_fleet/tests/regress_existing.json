@@ -1,0 +1,40 @@
+{
+  "protocol_id": "REGRESS_EXISTING",
+  "status": "regression against the 320-run campaign (seeds reused deliberately; not an experiment)",
+  "excluded_seeds": [],
+  "design": {
+    "seeds": [
+      30001,
+      45001
+    ],
+    "fleet_configs": [
+      {
+        "id": "V12R100",
+        "vehicles": 12,
+        "requests": 100
+      }
+    ],
+    "mass_configs": [
+      {
+        "id": "M825_P80",
+        "overrides": {}
+      }
+    ],
+    "algorithms": [
+      "hungarian",
+      "greedy"
+    ],
+    "initial_soc": [
+      1.0,
+      0.25
+    ],
+    "alpha_energy": [
+      0,
+      1
+    ],
+    "beta_time": 1.0,
+    "soc_cost_weight": 0.0,
+    "probe": true
+  },
+  "contrasts": []
+}
